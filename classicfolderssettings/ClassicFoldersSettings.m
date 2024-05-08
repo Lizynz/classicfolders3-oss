@@ -32,14 +32,14 @@ extern char **environ;
 
 	UIImageView *titleView = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,320,121)];
 	titleView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-	[titleView setImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ClassicFoldersSettings.bundle/banner.png"]];
+	[titleView setImage:[UIImage imageWithContentsOfFile:@"/var/jb/Library/PreferenceBundles/ClassicFoldersSettings.bundle/banner.png"]];
 	[titleView setBackgroundColor:[UIColor colorWithRed:0 green:(122.f/255.f) blue:1.f alpha:1.0f]];
 	[headerView addSubview:titleView];
 
 	[[self table] addSubview:headerView];
 	[[self table] setContentOffset:CGPointMake(0,0)];
 
-	[[self navigationItem] setRightBarButtonItem:[[UIBarButtonItem alloc] initWithImage:[UIImage imageWithContentsOfFile:@"/Library/PreferenceBundles/ClassicFoldersSettings.bundle/heart.png"] style:UIBarButtonItemStylePlain target:self action:@selector(tweet:)]];
+	[[self navigationItem] setRightBarButtonItem:[[UIBarButtonItem alloc] initWithImage:[UIImage imageWithContentsOfFile:@"/var/jb/Library/PreferenceBundles/ClassicFoldersSettings.bundle/heart.png"] style:UIBarButtonItemStylePlain target:self action:@selector(tweet:)]];
 }
 
 - (void)tweet:(id)sender {
@@ -52,11 +52,11 @@ extern char **environ;
 }
 
 - (void)respring:(id)sender {
-	pid_t pid;
-	char *argv[] = {"sbreload", NULL};
-	posix_spawn(&pid, "/usr/bin/sbreload", NULL, NULL, argv, environ);
-	int status;
-	waitpid(pid, &status, 0);
+    pid_t pid;
+    int status;
+    const char* args[] = { "killall", "-9", "SpringBoard", NULL };
+    posix_spawn(&pid, "/var/jb/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
+    waitpid(pid, &status, WEXITED);
 }
 
 - (void)coolstarTwitter:(id)sender {

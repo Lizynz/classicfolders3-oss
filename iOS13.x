@@ -30,15 +30,14 @@ typedef struct SBIconCoordinate {
 - (SBIconListFlowLayout *)layout {
 	SBIconListFlowLayout *layout = %orig;
 
-
 	SBIconListGridLayoutConfiguration *configuration = [layout layoutConfiguration];
-	configuration.numberOfPortraitColumns = 4;
-	configuration.numberOfPortraitRows = 5;
-	configuration.numberOfLandscapeColumns = 5;
-	configuration.numberOfLandscapeRows = 4;
+//	configuration.numberOfPortraitColumns = 4;
+//	configuration.numberOfPortraitRows = 5;
+//	configuration.numberOfLandscapeColumns = 5;
+//	configuration.numberOfLandscapeRows = 4;
 
-	configuration.portraitLayoutInsets = UIEdgeInsetsMake(0, [self sideIconInset], 5.0f, [self sideIconInset]);
-	configuration.landscapeLayoutInsets = UIEdgeInsetsMake(0, [self sideIconInset], 5.0f, [self sideIconInset]);
+	configuration.portraitLayoutInsets = UIEdgeInsetsMake(0, [self sideIconInset], 15.0f, [self sideIconInset]); //5
+	configuration.landscapeLayoutInsets = UIEdgeInsetsMake(0, [self sideIconInset], 15.0f, [self sideIconInset]); //5
 
 	return layout;
 }
@@ -52,6 +51,59 @@ typedef struct SBIconCoordinate {
 		return 27.0f;
 	else
 		return 17.0f;
+}
+%end
+
+%hook SBIconListFlowLayout // Icon Layout
+
+- (NSUInteger)numberOfRowsForOrientation:(NSInteger)arg1 {
+    NSInteger x = %orig(arg1);
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone){
+        if (x==1) {
+            return %orig;
+        }
+        if (x==3) {
+            return 4;
+        }
+        return %orig;
+    }
+    return %orig;
+}
+
+- (NSUInteger)numberOfColumnsForOrientation:(NSInteger)arg1 {
+    NSInteger x = %orig(arg1);
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone){
+        if (x==1) {
+            return %orig;
+        }
+        if (x==3) {
+            return 4;
+        }
+        return %orig;
+    }
+    return %orig;
+}
+
+%end
+
+@interface _SBIconGridWrapperView : UIView // Grid Icon
+@property (nonatomic, assign) CGAffineTransform transform;
+@end
+
+%hook _SBIconGridWrapperView
+- (void)layoutSubviews {
+    %orig;
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        CGAffineTransform originalIconView = (self.transform);
+        self.transform = CGAffineTransformMake(
+                                               0.77,
+                                               originalIconView.b,
+                                               originalIconView.c,
+                                               0.77,
+                                               originalIconView.tx,
+                                               originalIconView.ty
+                                               );
+    }
 }
 %end
 
@@ -71,7 +123,7 @@ typedef struct SBIconCoordinate {
 
 			SBFolderController *folderController = [[%c(SBFolderController) alloc] initWithFolder:[folderIcon folder] orientation:[iconController orientation] viewMap:map];
 			[folderController setFolderDelegate:self];
-			[folderController setLegibilitySettings:[self legibilitySettings]];
+            [folderController setLegibilitySettings:[self legibilitySettings]];
 			[folderController setEditing:[iconController isEditing]];
 
 			SBFolderPresentingViewController *presentingController = [self folderPresentingViewController];
@@ -152,6 +204,19 @@ typedef struct SBIconCoordinate {
 		return NO;
 	}
 	return YES;
+}
+
+- (void)setEditing:(BOOL)arg1 animated:(BOOL)arg2 { // temporary solution
+    %orig;
+    if ([self isKindOfClass:NSClassFromString(@"SBFolderController")] || [self isKindOfClass:NSClassFromString(@"SBFloatyFolderController")]) {
+        if ([self respondsToSelector:@selector(isOpen)]) {
+            if (arg1) { // If edit mode is enabled
+                [self setValue:@NO forKey:@"open"]; // No Open Folder
+            } else {
+                [self setValue:@YES forKey:@"open"]; // Open Folder
+            }
+        }
+    }
 }
 
 - (BOOL)popFolderAnimated:(BOOL)animated completion:(void(^)(BOOL finished))completion {

@@ -184,7 +184,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>footerText</key>
-			<string>ClassicFolders 2 is ©2019, CoolStar &amp; Jeremy Goulet. All Rights Reserved.</string>
+			<string>ClassicFolders 3 is ©2019, CoolStar &amp; Jeremy Goulet. All Rights Reserved.</string>
 			<key>label</key>
 			<string>Credits</string>
 		</dict>
@@ -194,7 +194,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>icon</key>
-			<string>/Library/PreferenceBundles/ClassicFoldersSettings.bundle/Twitter.png</string>
+			<string>/var/jb/Library/PreferenceBundles/ClassicFoldersSettings.bundle/Twitter.png</string>
 			<key>label</key>
 			<string>CoolStar (@coolstarorg)</string>
 		</dict>
@@ -204,7 +204,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>icon</key>
-			<string>/Library/PreferenceBundles/ClassicFoldersSettings.bundle/Twitter.png</string>
+			<string>/var/jb/Library/PreferenceBundles/ClassicFoldersSettings.bundle/Twitter.png</string>
 			<key>label</key>
 			<string>Jeremy Goulet (@JeremyGoulet)</string>
 		</dict>

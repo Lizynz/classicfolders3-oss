@@ -65,7 +65,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 
 	SBIconController *controller = [%c(SBIconController) sharedInstance];
 	SBIconViewMap *homescreenMap = homescreenMap = [%c(SBIconViewMap) homescreenMap];
-	BOOL isFlipped = NO;//[folderIconView isInDock];
+    BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"];
 
 	NSInteger modernStyle = 12;
 	if ([[CSClassicFolderSettingsManager sharedInstance] dark]){
@@ -88,9 +88,9 @@ static const char *kCSFolderTopLineRightIdentifier;
 				[backView setImage:[[UIImage classicFolderImageNamed:@"iOS 4/FolderSwitcherBG~ipad"] resizableImageWithCapInsets:UIEdgeInsetsMake(0,288,0,288) resizingMode:UIImageResizingModeTile]];
 		} else if (isClassic){
 			if ([[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad)
-				[backView setImage:[UIImage imageNamed:@"FolderSwitcherBG-568h~iphone"]];
-			else
-				[backView setImage:[UIImage imageNamed:@"FolderSwitcherBG~ipad"]];
+                [backView setImage:[[UIImage classicFolderImageNamed:@"FolderSwitcherBG~iphone"] resizableImageWithCapInsets:UIEdgeInsetsMake(0,152,0,152) resizingMode:UIImageResizingModeTile]];
+            else
+                [backView setImage:[[UIImage classicFolderImageNamed:@"FolderSwitcherBG~ipad"] resizableImageWithCapInsets:UIEdgeInsetsMake(0,288,0,288) resizingMode:UIImageResizingModeTile]];
 		} else {
 			[backView setImage:[[UIImage classicFolderImageNamed:@"Mavericks/BGGradient"] resizableImageWithCapInsets:UIEdgeInsetsMake(0,159,0,159)]];
 		}
@@ -142,9 +142,9 @@ static const char *kCSFolderTopLineRightIdentifier;
 				[arrowView setImage:[[UIImage classicFolderImageNamed:@"iOS 4/FolderSwitcherBG~ipad"] resizableImageWithCapInsets:UIEdgeInsetsZero resizingMode:UIImageResizingModeTile]];
 		} else if (isClassic){
 			if ([[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad)
-				[arrowView setImage:[UIImage imageNamed:@"FolderSwitcherBG-568h~iphone"]];
-			else
-				[arrowView setImage:[UIImage imageNamed:@"FolderSwitcherBG~ipad"]];
+                [arrowView setImage:[[UIImage classicFolderImageNamed:@"FolderSwitcherBG~iphone"] resizableImageWithCapInsets:UIEdgeInsetsZero resizingMode:UIImageResizingModeTile]];
+            else
+                [arrowView setImage:[[UIImage classicFolderImageNamed:@"FolderSwitcherBG~ipad"] resizableImageWithCapInsets:UIEdgeInsetsZero resizingMode:UIImageResizingModeTile]];
 		} else {
 			UIImageView *arrowBackgroundView = [[UIImageView alloc] initWithFrame:CGRectMake(-arrowView.frame.origin.x,0,[self backdropView].frame.size.width,12)];
 			[arrowBackgroundView setImage:[[UIImage classicFolderImageNamed:@"Mavericks/BGGradient"] resizableImageWithCapInsets:UIEdgeInsetsMake(0,159,0,159)]];
@@ -262,13 +262,13 @@ static const char *kCSFolderTopLineRightIdentifier;
 		[self setTopLineRight:topLineRight];
 		[containerView addSubview:[topLineRight autorelease]];
 
-		UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectMake(adjust,isFlipped ? 0 : containerView.bounds.size.height-1,wantedFrame.size.width,1)];
-		[bottomLine setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:0.4]];
-		if (isFlipped)
-			bottomLine.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
-		else
-			bottomLine.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-		[containerView addSubview:[bottomLine autorelease]];
+        UIView *bottomLine = [[UIView alloc] initWithFrame:CGRectMake(adjust,isFlipped ? 0 : containerView.bounds.size.height-1,wantedFrame.size.width,1)];
+        [bottomLine setBackgroundColor:[UIColor colorWithWhite:1.0 alpha:0.4]];
+        if (isFlipped)
+            bottomLine.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleBottomMargin;
+        else
+            bottomLine.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
+        [containerView addSubview:[bottomLine autorelease]];
 	}
 
 	UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -408,7 +408,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 	UIView *containerView = [self containerView];
 
 	SBIconView *folderIconView = [self folderIconView];
-	BOOL isFlipped = NO;//[folderIconView isInDock];
+    BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"];
 
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
@@ -544,7 +544,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
 
 	SBIconView *folderIconView = [self folderIconView];
-	BOOL isFlipped = NO;//[folderIconView isInDock];
+    BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"]; //+
 
 	CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
 
@@ -675,7 +675,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 - (void)layoutSubviews {
 
 	SBIconView *folderIconView = [self folderIconView];
-	BOOL isFlipped = NO;//[folderIconView isInDock];
+    BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"]; //+
 
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];

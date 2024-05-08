@@ -11,6 +11,14 @@
 - (void)setBlurring:(BOOL)blurring;
 @end
 
+@interface SBHLibraryAdditionalItemsIndicatorIconImageView : SBFolderIconImageView
+- (unsigned long long)concreteBackgroundStyle;
+@end
+
+@interface _UIBackdropView : UIView
+- (id)initWithStyle:(int)arg1;
+@end
+
 static char *kCSFolderIconBackgroundViewIdentifier;
 
 %group IconHook
@@ -58,76 +66,75 @@ static BOOL useClassicIcon = NO;
 static BOOL lockClassicIcon = NO;
 
 %hook SBFolderIconImageView
-- (SBFolderIconImageView *)initWithFrame:(CGRect)frame {
-	self = %orig;
+- (void)setBackgroundView:(UIView *)arg1 {
+        %orig;
+    
+    if (!lockClassicIcon){
+        useClassicIcon = (!isModern && classicIcon);
+        lockClassicIcon = YES;
+    }
 
-	if (!lockClassicIcon){
-		useClassicIcon = (!isModern && classicIcon);
-		lockClassicIcon = YES;
-	}
+    if (useClassicIcon){
+        UIImageView *iconView = [[UIImageView alloc] initWithFrame:self.bounds];
+        iconView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        iconView.clipsToBounds = YES;
 
-	if (useClassicIcon){
-		UIImageView *iconView = [[UIImageView alloc] initWithFrame:self.bounds];
-		iconView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-		iconView.clipsToBounds = YES;
+        ANEMSettingsManager *manager = [%c(ANEMSettingsManager) sharedManager];
+        if ([manager respondsToSelector:@selector(folderIconMaskRadius)]){
+            CGFloat radius = [manager folderIconMaskRadius];
+            iconView.layer.cornerRadius = radius;
+        }
 
-		ANEMSettingsManager *manager = [%c(ANEMSettingsManager) sharedManager];
-		if ([manager respondsToSelector:@selector(folderIconMaskRadius)]){
-			CGFloat radius = [manager folderIconMaskRadius];
-			iconView.layer.cornerRadius = radius;
-		}
-
-		if ([[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad){
-			if (isLegacy) {
-				if (classicShape)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/LegacyFolderIconBG~iphone"]];
-				else if (outline)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/OutlineFolderIconBG~iphone"]];
-				else
-					[iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/FolderIconBG~iphone"]];
-			} else if (isClassic){
-				if (classicShape)
-					[iconView setImage:[UIImage imageNamed:@"FolderIconBG~iphone"]];
-				else if (outline)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"OutlineFolderIconBG~iphone"]];
-				else
-					[iconView setImage:[UIImage classicFolderImageNamed:@"FolderIconBG~iphone"]];
-			} else {
-				if (classicShape)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/LegacyFolderIconBG~iphone"]];
-				else if (outline)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/OutlineFolderIconBG~iphone"]];
-				else
-					[iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/FolderIconBG~iphone"]];
-			}
-		} else {
-			if (isLegacy) {
-				if (classicShape)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/LegacyFolderIconBG~ipad"]];
-				else if (outline)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/OutlineFolderIconBG~ipad"]];
-				else
-					[iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/FolderIconBG~ipad"]];
-			} else if (isClassic){
-				if (classicShape)
-					[iconView setImage:[UIImage imageNamed:@"FolderIconBG~ipad"]];
-				else if (outline)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"OutlineFolderIconBG~ipad"]];
-				else
-					[iconView setImage:[UIImage classicFolderImageNamed:@"FolderIconBG~ipad"]];
-			} else {
-				if (classicShape)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/LegacyFolderIconBG~ipad"]];
-				else if (outline)
-					[iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/OutlineFolderIconBG~ipad"]];
-				else
-					[iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/FolderIconBG~ipad"]];
-			}
-		}
-		[self insertSubview:[iconView autorelease] aboveSubview:[self backgroundView]];
-		[[self backgroundView] setAlpha:0];
-	}
-	return self;
+        if ([[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad){
+            if (isLegacy) {
+                if (classicShape)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/LegacyFolderIconBG~iphone"]];
+                else if (outline)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/OutlineFolderIconBG~iphone"]];
+                else
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/FolderIconBG~iphone"]];
+            } else if (isClassic){
+                if (classicShape)
+                    [iconView setImage:[UIImage imageNamed:@"FolderIconBG~iphone"]];
+                else if (outline)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"OutlineFolderIconBG~iphone"]];
+                else
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"FolderIconBG~iphone"]];
+            } else {
+                if (classicShape)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/LegacyFolderIconBG~iphone"]];
+                else if (outline)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/OutlineFolderIconBG~iphone"]];
+                else
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/FolderIconBG~iphone"]];
+            }
+        } else {
+            if (isLegacy) {
+                if (classicShape)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/LegacyFolderIconBG~ipad"]];
+                else if (outline)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/OutlineFolderIconBG~ipad"]];
+                else
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"iOS 4/FolderIconBG~ipad"]];
+            } else if (isClassic){
+                if (classicShape)
+                    [iconView setImage:[UIImage imageNamed:@"FolderIconBG~ipad"]];
+                else if (outline)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"OutlineFolderIconBG~ipad"]];
+                else
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"FolderIconBG~ipad"]];
+            } else {
+                if (classicShape)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/LegacyFolderIconBG~ipad"]];
+                else if (outline)
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/OutlineFolderIconBG~ipad"]];
+                else
+                    [iconView setImage:[UIImage classicFolderImageNamed:@"Mavericks/FolderIconBG~ipad"]];
+            }
+        }
+        [self insertSubview:[iconView autorelease] aboveSubview:[self backgroundView]];
+        [[self backgroundView] setAlpha:0];
+    }
 }
 
 - (void)layoutSubviews {
@@ -142,6 +149,31 @@ static BOOL lockClassicIcon = NO;
 	%orig;
 	UIView *backgroundView = [self iconBackgroundView];
 	[backgroundView layoutSubviews];
+}
+%end
+
+_UIBackdropView *blurView;
+
+%hook SBHLibraryAdditionalItemsIndicatorIconImageView
+- (void)layoutSubviews {
+    %orig;
+    
+    for (UIView *subview in self.subviews) {
+        if ([subview isKindOfClass:[UIVisualEffectView class]]) {
+            [subview removeFromSuperview];
+        }
+    }
+    
+    UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
+    UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
+    
+    blurEffectView.frame = self.bounds;
+    blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    blurEffectView.layer.cornerRadius = 13.5;
+    blurEffectView.layer.masksToBounds = YES;
+    blurEffectView.alpha = 0.7;
+    
+    [self insertSubview:blurEffectView atIndex:0];
 }
 %end
 %end

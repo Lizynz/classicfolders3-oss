@@ -5,6 +5,6 @@
 	detail = ClassicFoldersSettingsListController;
 	icon = icon-29.png;
 	isController = 1;
-	label = "Classic Folders 2";
+	label = "Classic Folders 3";
     };
 }

@@ -27,6 +27,7 @@
 @end
 
 @interface SBIconView : UIView
+@property (nonatomic,copy) NSString * location;
 //iOS 13.0 - 13.3
 - (void)setAllIconElementsButLabelToHidden:(BOOL)hidden;
 //iOS 13.4-13.5
