@@ -67,18 +67,12 @@ static const char *kCSFolderTopLineRightIdentifier;
 	SBIconViewMap *homescreenMap = homescreenMap = [%c(SBIconViewMap) homescreenMap];
     BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"];
 
-	NSInteger modernStyle = 12;
-	if ([[CSClassicFolderSettingsManager sharedInstance] dark]){
-		modernStyle = 14;
-	}
-
 	if (isModern){
-		SBWallpaperEffectView *backView = [[%c(SBWallpaperEffectView) alloc] initWithWallpaperVariant:1];
-		[backView setStyle:modernStyle];
-		backView.layer.cornerRadius = 15;
-		[backView setClipsToBounds:YES];
-		[containerView addSubview:backView];
-		[self setBackdropView:[backView autorelease]];
+        UIVisualEffectView *backView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular]];
+        backView.layer.cornerRadius = 15;
+        backView.clipsToBounds = YES;
+        [containerView addSubview:backView];
+        [self setBackdropView:[backView autorelease]];
 	} else {
 		UIImageView *backView = [[UIImageView alloc] initWithFrame:CGRectZero];
 		if (isLegacy){
@@ -114,10 +108,9 @@ static const char *kCSFolderTopLineRightIdentifier;
 			adjust = 5.0f;
 	}
 	if (isModern){
-		SBWallpaperEffectView *arrowView = [[%c(SBWallpaperEffectView) alloc] initWithWallpaperVariant:1];
-		[arrowView setStyle:modernStyle];
-		[arrowView setClipsToBounds:YES];
-		[arrowView setFrame:CGRectMake(0, 0, 38, 12)];
+        UIVisualEffectView *arrowView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular]];
+        arrowView.clipsToBounds = YES;
+        arrowView.frame = CGRectMake(0, 0, 38, 12);
 		
 		CALayer *arrowViewMask = [CALayer layer];
 		arrowViewMask.frame = arrowView.bounds;
@@ -650,7 +643,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
 
-	if (YES){//(![folderIconView isInDock]){
+	if (![[[self folderIconView] location] containsString:@"Dock"]){
 		CGFloat screenHeight = rootContentView.frame.size.height;
 		if (wantedFrame.origin.y + wantedFrame.size.height > screenHeight){
 			yShift = screenHeight - (wantedFrame.origin.y + wantedFrame.size.height);
@@ -760,7 +753,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 	}
 
 	UILabel *titleLabel = [self labelView];
-	titleLabel.frame = CGRectMake(21+horizontalAdjust,isFlipped? 12 : 24,wantedFrame.size.width - (21 + horizontalAdjust)*2,22);
+	titleLabel.frame = CGRectMake(21+horizontalAdjust,isFlipped? 6 : 18,wantedFrame.size.width - (21 + horizontalAdjust)*2,22);
 
 	CGRect editFrame = titleLabel.frame;
     editFrame.origin.x -= 10;

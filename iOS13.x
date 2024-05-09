@@ -36,8 +36,8 @@ typedef struct SBIconCoordinate {
 //	configuration.numberOfLandscapeColumns = 5;
 //	configuration.numberOfLandscapeRows = 4;
 
-	configuration.portraitLayoutInsets = UIEdgeInsetsMake(0, [self sideIconInset], 15.0f, [self sideIconInset]); //5
-	configuration.landscapeLayoutInsets = UIEdgeInsetsMake(0, [self sideIconInset], 15.0f, [self sideIconInset]); //5
+	configuration.portraitLayoutInsets = UIEdgeInsetsMake(-5, [self sideIconInset], 20.0f, [self sideIconInset]); //5
+	configuration.landscapeLayoutInsets = UIEdgeInsetsMake(-5, [self sideIconInset], 20.0f, [self sideIconInset]); //5
 
 	return layout;
 }

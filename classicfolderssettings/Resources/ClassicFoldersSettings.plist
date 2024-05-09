@@ -113,24 +113,6 @@
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
-			<key>label</key>
-			<string>Modern Mode</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<false/>
-			<key>defaults</key>
-			<string>org.coolstar.classicfolders</string>
-			<key>key</key>
-			<string>dark</string>
-			<key>label</key>
-			<string>Dark Tint</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
 			<key>footerText</key>
 			<string>Toggling Classic Icon Settings Requires a respring</string>
 			<key>label</key>

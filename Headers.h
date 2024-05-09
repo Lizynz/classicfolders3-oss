@@ -27,7 +27,7 @@
 @end
 
 @interface SBIconView : UIView
-@property (nonatomic,copy) NSString * location;
+@property (nonatomic,copy) NSString * location; //iOS 14 +
 //iOS 13.0 - 13.3
 - (void)setAllIconElementsButLabelToHidden:(BOOL)hidden;
 //iOS 13.4-13.5
@@ -258,4 +258,7 @@
 - (BOOL)_shouldOpenFolderIcon:(id)arg1;
 - (id)legibilitySettings;
 - (void)dismissPresentedFolderAnimated:(BOOL)animated withTransitionContext:(id)context completion:(id)completion;
+@end
+
+@interface SBHSearchPillView : UIView //iOS 16
 @end

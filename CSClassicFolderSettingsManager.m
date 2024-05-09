@@ -20,7 +20,6 @@
         @"classicIcon":@NO,
         @"classicshape": @NO,
         @"outline": @NO,
-        @"dark": @NO,
         @"speedMultiplier": @1
     }];
 	return self;
@@ -59,10 +58,6 @@
 
 - (BOOL)outline {
 	return [_prefs boolForKey:@"outline"];
-}
-
-- (BOOL)dark {
-	return [_prefs boolForKey:@"dark"];
 }
 
 - (CGFloat)speedMultiplier {
