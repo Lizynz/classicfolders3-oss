@@ -386,7 +386,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	UIView *rootContentView = [[rootFolderController contentView] _currentIconListView];
 	NSMutableArray *views = [rootContentView.subviews mutableCopy];
-	if (YES){//(![[self folderIconView] isInDock]){
+	if (![[[self folderIconView] location] containsString:@"Dock"]){
 		UIView *dockView = [[rootFolderController contentView] dockView];
 		if (dockView != nil)
 			[views addObject:dockView];
@@ -438,13 +438,27 @@ static const char *kCSFolderTopLineRightIdentifier;
 		animations:^(void){
 			SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
 			[iconContentView setClassicFolderIsOpen:YES];
+        
+        UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+        if ([[[self folderIconView] location] containsString:@"Dock"]) {
+            pageControl.alpha = 0;
+            
+            if (@available(iOS 16, *)) {
+                SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+                UIView *superview = searchPillView.superview;
+                superview.hidden = YES;
+            }
+        } else {
+            pageControl.alpha = 0;
+            
+            if (@available(iOS 16, *)) {
+                SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+                UIView *superview = searchPillView.superview;
+                superview.hidden = YES;
+            }
+        }
 
-			if (NO){//([folderIconView isInDock]){
-				UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
-				pageControl.alpha = 0;
-			}
-
-			[self layoutSubviews];
+        [self layoutSubviews];
 	} completion:completion];
 }
 
@@ -475,13 +489,26 @@ static const char *kCSFolderTopLineRightIdentifier;
 
 			SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
 			[iconContentView setClassicFolderIsOpen:NO];
-
-			if (YES){//(![folderIconView isInDock]){
-				[rootContentView setClassicFolderShift:0.0f];
-			} else {
-				UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
-				pageControl.alpha = 1;
-			}
+            
+            UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+            if ([[[self folderIconView] location] containsString:@"Dock"]) {
+                pageControl.alpha = 1;
+                
+                if (@available(iOS 16, *)) {
+                    SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+                    UIView *superview = searchPillView.superview;
+                    superview.hidden = NO;
+                }
+            } else {
+                pageControl.alpha = 1;
+                
+                if (@available(iOS 16, *)) {
+                    SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+                    UIView *superview = searchPillView.superview;
+                    superview.hidden = NO;
+                }
+            }
+            
 			[rootContentView layoutSubviews];
 		} completion:^(BOOL completed){
 			self.superview.clipsToBounds = YES;
@@ -499,7 +526,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 		SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
 		[iconContentView setClassicFolderIsOpen:NO];
 
-		if (YES){//(![folderIconView isInDock]){
+		if (![[[self folderIconView] location] containsString:@"Dock"]){
 			[rootContentView setClassicFolderShift:0.0f];
 		} else {
 			UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];

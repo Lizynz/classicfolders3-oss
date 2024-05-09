@@ -85,16 +85,8 @@ static const char *kCSFolderIconIdentifier;
 			dockViewFrame.origin.y += classicFolderFrame.size.height;
 			dockView.frame = dockViewFrame;
 		}
-
-		UIView *pageControlView = [self valueForKey:@"_pageControl"];
-		CGRect pageControlViewFrame = pageControlView.frame;
-		pageControlViewFrame.origin.y += classicFolderFrame.size.height;
-		pageControlView.frame = pageControlViewFrame;
-
-		[[self classicFolderIconView] _applyIconLabelAlpha:0.0];
-	} else {
-		UIView *pageControlView = [self valueForKey:@"_pageControl"];
-		pageControlView.alpha = 0;
+        
+        [[self classicFolderIconView] _applyIconLabelAlpha:0.0];
 	}
 }
 
