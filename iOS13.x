@@ -278,6 +278,21 @@ typedef struct SBIconCoordinate {
 	return image;
 }
 %end
+
+//Hide Folder Name Shortcuts
+%hook SBIconView
+
+- (void)setApplicationShortcutItems:(NSArray *)arg1 {
+    NSMutableArray *newItems = [[NSMutableArray alloc] init];
+    for (SBSApplicationShortcutItem *item in arg1) {
+        if (![item.type isEqualToString:@"com.apple.springboardhome.application-shortcut-item.rename-folder"]) {
+            [newItems addObject:item];
+        }
+    }
+    %orig(newItems);
+}
+
+%end
 %end
 
 %ctor {

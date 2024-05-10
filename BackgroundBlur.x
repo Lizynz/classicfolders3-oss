@@ -4,16 +4,17 @@
 
 static UIView *kCSblurView;
 static const char *kCSFolderOpenIdentifier;
+_UIBackdropView *blurView;
 
 %hook SBIconContentView
 %new;
 - (void)initBlurView {
-	SBWallpaperEffectView *blurView = [[%c(SBWallpaperEffectView) alloc] initWithWallpaperVariant:1];
-	blurView.frame = self.bounds;
-	blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-	[blurView setStyle:5];
-	[self addSubview:[blurView autorelease]];
-	[self sendSubviewToBack:blurView];
+    _UIBackdropViewSettings *settings = [_UIBackdropViewSettings settingsForStyle:2];
+    _UIBackdropView *blurView = [[_UIBackdropView alloc] initWithFrame:CGRectZero autosizesToFitSuperview:YES settings:settings];
+    blurView.frame = self.bounds;
+    blurView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    [self addSubview:[blurView autorelease]];
+    [self sendSubviewToBack:blurView];
 
 	[self setClassicFolderIsOpen:NO];
 
@@ -50,7 +51,7 @@ static const char *kCSFolderOpenIdentifier;
 - (void)setClassicFolderIsOpen:(BOOL)isOpen {
 	objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:isOpen], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 	if (blurBackground == 2){
-		kCSblurView.alpha = isOpen ? 1 : 0;
+		kCSblurView.alpha = isOpen ? 0.9 : 0;
 	}
 }
 
@@ -61,7 +62,7 @@ static const char *kCSFolderOpenIdentifier;
 	if (blurBackground == 0)
 		kCSblurView.alpha = 0;
 	else if (blurBackground == 1)
-		kCSblurView.alpha = 1;
+		kCSblurView.alpha = 0.9;
 	else
 		kCSblurView.alpha = [self classicFolderIsOpen] ? 1 : 0;
 

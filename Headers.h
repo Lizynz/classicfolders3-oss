@@ -236,7 +236,6 @@
 - (BOOL)classicIcon;
 - (BOOL)classicShape;
 - (BOOL)outline;
-- (BOOL)dark;
 - (CGFloat)speedMultiplier;
 @end
 
@@ -261,4 +260,16 @@
 @end
 
 @interface SBHSearchPillView : UIView //iOS 16
+@end
+
+@interface SBSApplicationShortcutItem : NSObject
+@property (nonatomic, retain) NSString *type;
+@end
+
+@interface _UIBackdropViewSettings : NSObject
++ (id)settingsForStyle:(NSInteger)arg1;
+@end
+
+@interface _UIBackdropView : UIView
+- (id)initWithFrame:(CGRect)arg1 autosizesToFitSuperview:(BOOL)arg2 settings:(id)arg3;
 @end

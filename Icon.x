@@ -15,46 +15,25 @@
 - (unsigned long long)concreteBackgroundStyle;
 @end
 
-@interface _UIBackdropView : UIView
-- (id)initWithStyle:(int)arg1;
-@end
-
 static char *kCSFolderIconBackgroundViewIdentifier;
 
 %group IconHook
 %hook SBFolderIconBackgroundView
 - (void)setWallpaperBackgroundRect:(CGRect)backgroundRect forContents:(CGImageRef)contents withFallbackColor:(CGColorRef)fallbackColor {
 	SBWallpaperEffectView *backView = objc_getAssociatedObject(self, &kCSFolderIconBackgroundViewIdentifier);
-	if ([[CSClassicFolderSettingsManager sharedInstance] dark]){
-		if (!backView){
-			backView = [[%c(SBWallpaperEffectView) alloc] initWithWallpaperVariant:1];
-			backView.frame = self.bounds;
-			[backView setStyle:14];
-			[self addSubview:[backView autorelease]];
-		}
-
-    	contents = nil;
-    	backgroundRect = CGRectZero;
-	} else {
-		if (backView){
-			[backView removeFromSuperview];
-			backView = nil;
-		}
-	}
-	objc_setAssociatedObject(self, &kCSFolderIconBackgroundViewIdentifier, backView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    if (backView){
+        [backView removeFromSuperview];
+        backView = nil;
+    }
+    objc_setAssociatedObject(self, &kCSFolderIconBackgroundViewIdentifier, backView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 	%orig(backgroundRect,contents,fallbackColor);
 }
 
 - (void)layoutSubviews {
 	%orig;
-	if (![self respondsToSelector:@selector(setWallpaperBackgroundRect:forContents:withFallbackColor:)]){
-		if ([[CSClassicFolderSettingsManager sharedInstance] dark]){
-			[self setBlurring:NO];
-			[self setBackgroundColor:[UIColor colorWithWhite:0.0f alpha:0.6f]];
-		} else {
-			[self setBlurring:YES];
-		}
-	}
+    if (![self respondsToSelector:@selector(setWallpaperBackgroundRect:forContents:withFallbackColor:)]){
+        [self setBlurring:YES];
+    }
 }
 
 -(void)didAddSubview:(UIView *)arg1 {
@@ -151,8 +130,6 @@ static BOOL lockClassicIcon = NO;
 	[backgroundView layoutSubviews];
 }
 %end
-
-_UIBackdropView *blurView;
 
 %hook SBHLibraryAdditionalItemsIndicatorIconImageView
 - (void)layoutSubviews {
