@@ -279,6 +279,15 @@ typedef struct SBIconCoordinate {
 }
 %end
 
+//Fix folder open when Reduce Transparency is enabled or when folders are opened in the air.
+%hook SBFolderController
+
+- (BOOL)_homescreenAndDockShouldFade {
+    return NO;
+}
+
+%end
+
 //Hide Folder Name Shortcuts
 %hook SBIconView
 
