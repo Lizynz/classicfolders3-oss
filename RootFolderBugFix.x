@@ -65,10 +65,6 @@ static const char *kCSFolderIconIdentifier;
 	%orig;
 
 	SBIconListView *iconListView = nil;
-	if ([self respondsToSelector:@selector(_currentIconListView)])
-		iconListView = [self _currentIconListView];
-	else
-		iconListView = [self currentIconListView];
 	[iconListView setClassicFolderInDock:[self classicFolderInDock]];
 	[iconListView setClassicFolderFrame:[self classicFolderFrame]];
 	[iconListView setClassicFolderShift:[self classicFolderShift]];
