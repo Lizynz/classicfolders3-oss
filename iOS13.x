@@ -24,6 +24,8 @@ typedef struct SBIconCoordinate {
 - (SBIconListGridLayoutConfiguration *)layoutConfiguration;
 @end
 
+static SBIconController *iconController = nil;
+
 %group FolderHooks
 %subclass SBFolderIconListView : SBIconListView
 
@@ -301,6 +303,21 @@ typedef struct SBIconCoordinate {
     %orig(newItems);
 }
 
+%end
+
+//Auto Close Folder
+%hook SBUIController
+- (void)activateApplication:(id)arg1 fromIcon:(id)arg2 location:(long long)arg3 activationSettings:(id)arg4 actions:(id)arg5 {
+    SBIconController *iconController = [%c(SBIconController) sharedInstance];
+    if ([[iconController _openFolderController] isOpen]) {
+        %orig;
+        if ([[CSClassicFolderSettingsManager sharedInstance] autoCloseFolders]){
+            [iconController.iconManager closeFolderAnimated:YES withCompletion:nil];
+        }
+    } else {
+        %orig;
+    }
+}
 %end
 %end
 

@@ -18,12 +18,22 @@
 @interface SBIcon : NSObject
 @end
 
+@interface SBHIconManager : NSObject
+- (void)closeFolderAnimated:(BOOL)arg1 withCompletion:(id)arg2;
+@end
+
 @interface SBIconController : NSObject
+@property (nonatomic,readonly) SBFolderController *currentFolderController;
+@property (nonatomic,readonly) SBFolderController *openFolderController;
+@property (nonatomic,readonly) SBHIconManager *iconManager;
 + (id)sharedInstance;
 - (SBRootFolderController *)_rootFolderController;
 - (SBIconContentView *)contentView;
 - (UIInterfaceOrientation)orientation;
 - (BOOL)isEditing;
+- (SBFolderController *)_openFolderController;
+- (void)iconManager:(id)arg1 launchIconForIconView:(id)arg2;
+- (void)iconManager:(SBHIconManager *)arg1 willCloseFolderController:(SBFolderController *)arg2;
 @end
 
 @interface SBIconView : UIView
@@ -236,6 +246,7 @@
 - (BOOL)classicIcon;
 - (BOOL)classicShape;
 - (BOOL)outline;
+- (BOOL)autoCloseFolders;
 - (CGFloat)speedMultiplier;
 @end
 

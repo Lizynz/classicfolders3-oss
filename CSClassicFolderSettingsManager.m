@@ -20,6 +20,7 @@
         @"classicIcon":@NO,
         @"classicshape": @NO,
         @"outline": @NO,
+        @"autoCloseFolders": @NO,
         @"speedMultiplier": @1
     }];
 	return self;
@@ -59,6 +60,10 @@
 - (BOOL)outline {
 	return [_prefs boolForKey:@"outline"];
 }
+
+- (BOOL)autoCloseFolders {
+     return [_prefs boolForKey:@"autoCloseFolders"];
+ }
 
 - (CGFloat)speedMultiplier {
 	return [_prefs floatForKey:@"speedMultiplier"];
