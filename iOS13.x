@@ -25,6 +25,7 @@ typedef struct SBIconCoordinate {
 @end
 
 static SBIconController *iconController = nil;
+static BOOL speed;
 
 %group FolderHooks
 %subclass SBFolderIconListView : SBIconListView
@@ -57,14 +58,18 @@ static SBIconController *iconController = nil;
 %end
 
 %hook SBIconListFlowLayout // Icon Layout
-
 - (NSUInteger)numberOfRowsForOrientation:(NSInteger)arg1 {
+    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
+        return %orig(arg1);
+    }
+
     NSInteger x = %orig(arg1);
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone){
-        if (x==1) {
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        if (x == 1) {
             return %orig;
         }
-        if (x==3) {
+        if (x == 3) {
             return 4;
         }
         return %orig;
@@ -73,6 +78,11 @@ static SBIconController *iconController = nil;
 }
 
 - (NSUInteger)numberOfColumnsForOrientation:(NSInteger)arg1 {
+    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
+        return %orig(arg1);
+    }
+    
     NSInteger x = %orig(arg1);
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone){
         if (x==1) {
@@ -94,7 +104,14 @@ static SBIconController *iconController = nil;
 
 %hook _SBIconGridWrapperView
 - (void)layoutSubviews {
+    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
+        %orig;
+        return;
+    }
+    
     %orig;
+    
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         CGAffineTransform originalIconView = (self.transform);
         self.transform = CGAffineTransformMake(
@@ -192,7 +209,7 @@ static SBIconController *iconController = nil;
 		[self configureInnerFolderControllerConfiguration:configuration];
 
 		SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
-		[self pushNestedViewController:innerController animated:NO withCompletion:^(BOOL finished){
+		[self pushNestedViewController:innerController animated:speed withCompletion:^(BOOL finished){
 			if ([folderControllerClass _contentViewClass] == %c(CSClassicFolderView)){
 				CSClassicFolderView *folderView = (CSClassicFolderView *)[innerController contentView];
 				[folderView setFolderController:innerController];
@@ -208,14 +225,16 @@ static SBIconController *iconController = nil;
 	return YES;
 }
 
-- (void)setEditing:(BOOL)arg1 animated:(BOOL)arg2 { // temporary solution
+- (void)setEditing:(BOOL)arg1 animated:(BOOL)arg2 { // Animation control mode solves the problem when editing folder.
     %orig;
     if ([self isKindOfClass:NSClassFromString(@"SBFolderController")] || [self isKindOfClass:NSClassFromString(@"SBFloatyFolderController")]) {
         if ([self respondsToSelector:@selector(isOpen)]) {
-            if (arg1) { // If edit mode is enabled
-                [self setValue:@NO forKey:@"open"]; // No Open Folder
+            if (arg1) {
+                [self setValue:@YES forKey:@"open"];
+                speed = YES;
             } else {
-                [self setValue:@YES forKey:@"open"]; // Open Folder
+                [self setValue:@YES forKey:@"open"];
+                speed = NO;
             }
         }
     }

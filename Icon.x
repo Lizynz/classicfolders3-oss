@@ -133,8 +133,14 @@ static BOOL lockClassicIcon = NO;
 
 %hook SBHLibraryAdditionalItemsIndicatorIconImageView
 - (void)layoutSubviews {
+    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+    if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
+        %orig;
+        return;
+    }
+
     %orig;
-    
+
     for (UIView *subview in self.subviews) {
         if ([subview isKindOfClass:[UIVisualEffectView class]]) {
             [subview removeFromSuperview];
@@ -152,6 +158,7 @@ static BOOL lockClassicIcon = NO;
     
     [self insertSubview:blurEffectView atIndex:0];
 }
+
 %end
 %end
 

@@ -374,20 +374,20 @@ static const char *kCSFolderTopLineRightIdentifier;
 
 %new;
 - (NSArray *)getVisibleViewsUnderFolder {
-	if (!verifyUDID())
-		safeMode();
-	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
-	UIView *rootContentView = [[rootFolderController contentView] _currentIconListView];
-	NSMutableArray *views = [rootContentView.subviews mutableCopy];
-	if (![[[self folderIconView] location] containsString:@"Dock"]){
-		UIView *dockView = [[rootFolderController contentView] dockView];
-		if (dockView != nil)
-			[views addObject:dockView];
-		UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
-		if (pageControl != nil)
-			[views addObject:pageControl];
-	}
-	return [views autorelease];
+    if (!verifyUDID())
+        safeMode();
+    SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
+    UIView *rootContentView = [[rootFolderController contentView] _currentIconListView];
+    NSMutableArray *views = [rootContentView.subviews mutableCopy];
+    if (![[[self folderIconView] location] containsString:@"Dock"]){
+        UIView *dockView = [[rootFolderController contentView] dockView];
+        if (dockView != nil)
+            [views addObject:dockView];
+        UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+        if (pageControl != nil)
+            [views addObject:pageControl];
+    }
+    return [views autorelease];
 }
 
 %new;
