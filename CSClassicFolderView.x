@@ -407,13 +407,13 @@ static const char *kCSFolderTopLineRightIdentifier;
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
 	[rootContentView setClassicFolderInDock:isFlipped];
     
-    for (SBIconListView *iconListView in [rootContentView iconListViews]) {
-        if (![iconListView isEqual:[self currentIconListView]]) {
-            [UIView animateWithDuration:0.0 animations:^{
-                [iconListView setAlpha:0.5];
-            }];
-        }
-    }
+//    for (SBIconListView *iconListView in [rootContentView iconListViews]) {
+//        if (![iconListView isEqual:[self currentIconListView]]) {
+//            [UIView animateWithDuration:0.0 animations:^{
+//                [iconListView setAlpha:0.5];
+//            }];
+//        }
+//    }
 
 	[self layoutSubviews];
 
@@ -475,13 +475,13 @@ static const char *kCSFolderTopLineRightIdentifier;
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
     
-    for (SBIconListView *iconListView in [rootContentView iconListViews]) {
-        if (![iconListView isEqual:[self currentIconListView]]) {
-            [UIView animateWithDuration:0.0 animations:^{
-                [iconListView setAlpha:1.0];
-            }];
-        }
-    }
+//    for (SBIconListView *iconListView in [rootContentView iconListViews]) {
+//        if (![iconListView isEqual:[self currentIconListView]]) {
+//            [UIView animateWithDuration:0.0 animations:^{
+//                [iconListView setAlpha:1.0];
+//            }];
+//        }
+//    }
 
 	float animTime = ((float)[self getMaximumIconRowsForPages] * 0.25);
 	if (animTime > 0.4)
