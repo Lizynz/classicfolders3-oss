@@ -40,6 +40,8 @@ static const char *kCSFolderTopLineRightIdentifier;
 @property (nonatomic, strong) UIView *topLineRight;
 @end
 
+BOOL isFlipped;
+
 %subclass CSClassicFolderView : SBFolderView
 
 %new
@@ -65,7 +67,6 @@ static const char *kCSFolderTopLineRightIdentifier;
 
 	SBIconController *controller = [%c(SBIconController) sharedInstance];
 	SBIconViewMap *homescreenMap = homescreenMap = [%c(SBIconViewMap) homescreenMap];
-    BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"];
 
 	if (isModern){
         UIVisualEffectView *backView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular]];
@@ -500,7 +501,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 			[iconContentView setClassicFolderIsOpen:NO];
             
             UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
-            if ([[[self folderIconView] location] containsString:@"Dock"]) {
+            if (![[[self folderIconView] location] containsString:@"Dock"]) { // ????
                 pageControl.alpha = 1;
                 
                 if (@available(iOS 16, *)) {
@@ -580,7 +581,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
 
 	SBIconView *folderIconView = [self folderIconView];
-    BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"]; //+
+    BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"];
 
 	CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
 
@@ -711,7 +712,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 - (void)layoutSubviews {
 
 	SBIconView *folderIconView = [self folderIconView];
-    BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"]; //+
+    BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"];
 
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
@@ -862,23 +863,27 @@ static const char *kCSFolderTopLineRightIdentifier;
 	}
 }*/
 
--(void)setEditing:(BOOL)editing animated:(BOOL)animated {
-	%orig;
-	[[self containerView] bringSubviewToFront:[self labelEditView]];
-	float duration = 0.0f;
-	if (animated)
-		duration = 0.25f;
-	[UIView animateWithDuration:duration animations:^{
-		if (!editing){
-			[[self labelView] setAlpha:1.0f];
-			[[self labelEditView] setAlpha:0.0f];
-		} else {
-			[[self labelView] setAlpha:0.0f];
-			[[self labelEditView] setAlpha:1.0f];
-		}
-		[self layoutSubviews];
-	}];
-	[self resetIconListViews];
+- (void)setEditing:(BOOL)editing animated:(BOOL)animated {
+    %orig;
+    [[self containerView] bringSubviewToFront:[self labelEditView]];
+    float duration = 0.0f;
+    if (animated)
+        duration = 0.25f;
+    [UIView animateWithDuration:duration animations:^{
+        if (!editing){
+            [[self labelView] setAlpha:1.0f];
+            [[self labelEditView] setAlpha:0.0f];
+        } else {
+            [[self labelView] setAlpha:0.0f];
+            [[self labelEditView] setAlpha:1.0f];
+        }
+        [self layoutSubviews];
+    } completion:^(BOOL finished) {
+        if (!editing) {
+            [self endEditing:YES]; //hide the keyboard if there is no editing mode
+        }
+    }];
+    [self resetIconListViews];
 }
 
 - (BOOL)locationCountsAsInsideFolder:(CGPoint)location {
@@ -1026,6 +1031,18 @@ static const char *kCSFolderTopLineRightIdentifier;
 %new
 - (void)setTopLineRight:(UIView *)topLineRight {
 	objc_setAssociatedObject(self, &kCSFolderTopLineRightIdentifier, topLineRight, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+%end
+
+//Images weren't flipping because the icons weren't located in the dock.
+//Thank you https://github.com/udevsharold/bakgrunnur/blob/2f9c987f613b8aa1e42b6f2b622e1a0f9ce1a9ad/Bakgrunnur.xm#L395
+%hook SBIconView
+- (long long)currentLabelAccessoryType {
+    long long originalValue = %orig;
+    
+    isFlipped = [self.location containsString:@"Dock"] ? YES : NO;
+    
+    return originalValue;
 }
 %end
 
