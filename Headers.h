@@ -284,3 +284,7 @@
 @interface _UIBackdropView : UIView
 - (id)initWithFrame:(CGRect)arg1 autosizesToFitSuperview:(BOOL)arg2 settings:(id)arg3;
 @end
+@interface SBFloatingDockView : UIView
+-(void)HideDock ;
+-(void)ShowDock;
+@end
