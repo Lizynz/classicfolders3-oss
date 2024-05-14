@@ -441,6 +441,11 @@ BOOL isFlipped;
 			SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
 			[iconContentView setClassicFolderIsOpen:YES];
         
+
+		        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderOpen" object:nil];
+
+
+
         UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
         if ([[[self folderIconView] location] containsString:@"Dock"]) {
             pageControl.alpha = 0;
@@ -499,7 +504,8 @@ BOOL isFlipped;
 
 			SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
 			[iconContentView setClassicFolderIsOpen:NO];
-            
+            		        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderClosed" object:nil];
+
             UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
             if (![[[self folderIconView] location] containsString:@"Dock"]) { // ????
                 pageControl.alpha = 1;
@@ -535,6 +541,7 @@ BOOL isFlipped;
 
 		SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
 		[iconContentView setClassicFolderIsOpen:NO];
+            		        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderClosed" object:nil];
 
 		if (![[[self folderIconView] location] containsString:@"Dock"]){
 			[rootContentView setClassicFolderShift:0.0f];
@@ -1045,6 +1052,44 @@ BOOL isFlipped;
     return originalValue;
 }
 %end
+
+
+
+%hook SBFloatingDockView 
+
+-(void)layoutSubviews 
+
+{
+	%orig;
+	
+[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HideDock) name:@"FolderOpen" object:nil];
+[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ShowDock) name:@"FolderClosed" object:nil];
+
+
+
+}
+
+%new
+-(void)HideDock 
+{
+    [UIView animateWithDuration:0.3 animations:^{
+        self.alpha = 0.0;
+    } completion:^(BOOL finished) {
+        self.hidden = YES;
+    }];
+}
+
+%new
+-(void)ShowDock 
+{
+    self.hidden = NO;
+    [UIView animateWithDuration:0.3 animations:^{
+        self.alpha = 1.0;
+    }];
+}
+
+%end
+
 
 %ctor {
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
