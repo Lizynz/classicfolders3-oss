@@ -5,6 +5,9 @@
 #define isClassic [[CSClassicFolderSettingsManager sharedInstance] classic]
 #define isLegacy [[CSClassicFolderSettingsManager sharedInstance] legacy]
 
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+
 static const char *kCSFolderOpenIdentifier;
 static const char *kCSFolderMagnificationFractionIdentifier;
 static const char *kCSFolderArrowViewIdentifier;
@@ -438,8 +441,12 @@ BOOL isFlipped;
 	animTime *= [[CSClassicFolderSettingsManager sharedInstance] speedMultiplier];
 	[UIView animateWithDuration:animated? animTime : 0.0
 		animations:^(void){
-			SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
-			[iconContentView setClassicFolderIsOpen:YES];
+        
+        //Because of this, code crashes on iOS 17. This code is responsible for checking the opening/closing ClassicFolders. Check is needed to add blur when opening folder, this function does not yet work on iOS 17.
+        if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"14.0") && SYSTEM_VERSION_LESS_THAN(@"17.0")) {
+            SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
+            [iconContentView setClassicFolderIsOpen:YES];
+        }
         
 
 		        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderOpen" object:nil];
@@ -502,8 +509,10 @@ BOOL isFlipped;
 		animations:^(void){
 			[self layoutSubviews];
 
-			SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
-			[iconContentView setClassicFolderIsOpen:NO];
+            if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"14.0") && SYSTEM_VERSION_LESS_THAN(@"17.0")) {
+                SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
+                [iconContentView setClassicFolderIsOpen:NO];
+            }
             		        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderClosed" object:nil];
 
             UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
