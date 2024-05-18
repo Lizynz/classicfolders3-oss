@@ -104,9 +104,16 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 	[self setContainerView:containerView];
 
 	if (isModern){
-        UIVisualEffectView *backView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular]];
+        SBWallpaperEffectView *backView = [[%c(SBWallpaperEffectView) alloc] initWithWallpaperVariant:1];
+        
+        if ([[UITraitCollection currentTraitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark) {
+            [backView setStyle:14];
+        } else {
+            [backView setStyle:12];
+        }
+        
         backView.layer.cornerRadius = 15;
-        backView.clipsToBounds = YES;
+        [backView setClipsToBounds:YES];
         [containerView addSubview:backView];
         [self setBackdropView:[backView autorelease]];
 	} else {
@@ -144,9 +151,16 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 			adjust = 5.0f;
 	}
 	if (isModern){
-        UIVisualEffectView *arrowView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular]];
-        arrowView.clipsToBounds = YES;
-        arrowView.frame = CGRectMake(0, 0, 38, 12);
+        SBWallpaperEffectView *arrowView = [[%c(SBWallpaperEffectView) alloc] initWithWallpaperVariant:1];
+        
+        if ([[UITraitCollection currentTraitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark) {
+            [arrowView setStyle:14];
+        } else {
+            [arrowView setStyle:12];
+        }
+        
+        [arrowView setClipsToBounds:YES];
+        [arrowView setFrame:CGRectMake(0, 0, 38, 12)];
 		
 		CALayer *arrowViewMask = [CALayer layer];
 		arrowViewMask.frame = arrowView.bounds;
@@ -352,6 +366,54 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 	objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:NO], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 	[self setMagnificationFraction:0.0f];
 
+}
+
+- (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
+    %orig;
+    
+    UITraitCollection *currentTraitCollection = [UITraitCollection currentTraitCollection];
+    if ([currentTraitCollection hasDifferentColorAppearanceComparedToTraitCollection:previousTraitCollection]) {
+        if (isModern){
+            SBWallpaperEffectView *backView = (SBWallpaperEffectView *)[self backdropView];
+            if (backView) {
+                if (currentTraitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                    [backView setStyle:14];
+                } else {
+                    [backView setStyle:12];
+                }
+            }
+            
+            SBWallpaperEffectView *arrowView = (SBWallpaperEffectView *)[self arrowView];
+            if (arrowView) {
+                if (currentTraitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+                    [arrowView setStyle:14];
+                } else {
+                    [arrowView setStyle:12];
+                }
+            
+                [self updateArrowViewMask:arrowView];
+                
+            }
+        }
+    }
+}
+
+%new;
+- (void)updateArrowViewMask:(UIView *)arrowView {
+    CALayer *arrowViewMask = [CALayer layer];
+    arrowViewMask.frame = arrowView.bounds;
+    
+    UIImage *arrowImage;
+    if ([[[self folderIconView] location] containsString:@"Dock"]) {
+        arrowImage = [UIImage classicFolderImageNamed:@"ClassicFolderTop"];
+        arrowImage = [self flipImage:arrowImage];
+    } else {
+        arrowImage = [UIImage classicFolderImageNamed:@"ClassicFolderTop"];
+    }
+    
+    [arrowViewMask setContents:(id)arrowImage.CGImage];
+    [arrowView.layer setMask:arrowViewMask];
+    [arrowView setClipsToBounds:YES];
 }
 
 - (CSClassicFolderView *)initWithConfiguration:(SBFolderControllerConfiguration *)configuration {
