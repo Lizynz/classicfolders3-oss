@@ -1,6 +1,9 @@
 #import <dlfcn.h>
 #import <UIKit/UIKit.h>
 
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+
 @interface UIImage (ClassicFolders)
 + (UIImage *)classicFolderImageNamed:(NSString *)name;
 @end
@@ -19,6 +22,7 @@
 @end
 
 @interface SBHIconManager : NSObject
+- (SBFolderController*)openedFolderController;
 - (void)closeFolderAnimated:(BOOL)arg1 withCompletion:(id)arg2;
 @end
 
@@ -95,7 +99,11 @@
 @interface SBRootFolder : SBFolder
 @end
 
+@interface SBIconListPageControl : UIPageControl
+@end
+
 @interface SBFolderView : UIView
+@property (retain, nonatomic) SBIconListPageControl *pageControl;
 - (BOOL)isEditing;
 - (SBFolder *)folder;
 - (UIScrollView *)scrollView;

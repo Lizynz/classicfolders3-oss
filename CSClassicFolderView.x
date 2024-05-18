@@ -5,9 +5,6 @@
 #define isClassic [[CSClassicFolderSettingsManager sharedInstance] classic]
 #define isLegacy [[CSClassicFolderSettingsManager sharedInstance] legacy]
 
-#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
-#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
-
 static const char *kCSFolderOpenIdentifier;
 static const char *kCSFolderMagnificationFractionIdentifier;
 static const char *kCSFolderArrowViewIdentifier;
@@ -45,6 +42,44 @@ static const char *kCSFolderTopLineRightIdentifier;
 
 BOOL isFlipped;
 
+// Only iOS 15
+static void showPageControl15(SBRootFolderController *rootFolderController) {
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"15.0") && SYSTEM_VERSION_LESS_THAN(@"16.0")) {
+        SBIconListPageControl *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+        pageControl.hidden = NO;
+    }
+}
+
+static void hidePageControl15(SBRootFolderController *rootFolderController) {
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"15.0") && SYSTEM_VERSION_LESS_THAN(@"16.0")) {
+        SBIconListPageControl *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+        pageControl.hidden = YES;
+    }
+}
+
+// iOS 16 - 17
+static void showPageControl16(SBRootFolderController *rootFolderController) {
+    if (@available(iOS 16, *)) {
+        UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+        pageControl.alpha = 1;
+
+        SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+        UIView *superview = searchPillView.superview;
+        superview.hidden = NO;
+    }
+}
+
+static void hidePageControl16(SBRootFolderController *rootFolderController) {
+    if (@available(iOS 16, *)) {
+        UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+        pageControl.alpha = 0;
+
+        SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+        UIView *superview = searchPillView.superview;
+        superview.hidden = YES;
+    }
+}
+
 %subclass CSClassicFolderView : SBFolderView
 
 %new
@@ -67,9 +102,6 @@ BOOL isFlipped;
 	scalingView.frame = self.bounds;
 	[containerView setClipsToBounds:YES];
 	[self setContainerView:containerView];
-
-	SBIconController *controller = [%c(SBIconController) sharedInstance];
-	SBIconViewMap *homescreenMap = homescreenMap = [%c(SBIconViewMap) homescreenMap];
 
 	if (isModern){
         UIVisualEffectView *backView = [[UIVisualEffectView alloc] initWithEffect:[UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular]];
@@ -411,14 +443,6 @@ BOOL isFlipped;
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
 	[rootContentView setClassicFolderInDock:isFlipped];
     
-//    for (SBIconListView *iconListView in [rootContentView iconListViews]) {
-//        if (![iconListView isEqual:[self currentIconListView]]) {
-//            [UIView animateWithDuration:0.0 animations:^{
-//                [iconListView setAlpha:0.5];
-//            }];
-//        }
-//    }
-
 	[self layoutSubviews];
 
 	objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:YES], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
@@ -447,31 +471,17 @@ BOOL isFlipped;
             SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
             [iconContentView setClassicFolderIsOpen:YES];
         }
+    
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderOpen" object:nil];
         
-
-		        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderOpen" object:nil];
-
-
-
-        UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
         if ([[[self folderIconView] location] containsString:@"Dock"]) {
-            pageControl.alpha = 0;
-            
-            if (@available(iOS 16, *)) {
-                SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
-                UIView *superview = searchPillView.superview;
-                superview.hidden = YES;
-            }
+            hidePageControl15(rootFolderController);
+            hidePageControl16(rootFolderController);
         } else {
-            pageControl.alpha = 0;
-            
-            if (@available(iOS 16, *)) {
-                SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
-                UIView *superview = searchPillView.superview;
-                superview.hidden = YES;
-            }
+            hidePageControl15(rootFolderController);
+            hidePageControl16(rootFolderController);
         }
-
+        
         [self layoutSubviews];
 	} completion:completion];
 }
@@ -487,14 +497,6 @@ BOOL isFlipped;
 
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
-    
-//    for (SBIconListView *iconListView in [rootContentView iconListViews]) {
-//        if (![iconListView isEqual:[self currentIconListView]]) {
-//            [UIView animateWithDuration:0.0 animations:^{
-//                [iconListView setAlpha:1.0];
-//            }];
-//        }
-//    }
 
 	float animTime = ((float)[self getMaximumIconRowsForPages] * 0.25);
 	if (animTime > 0.4)
@@ -508,30 +510,20 @@ BOOL isFlipped;
 		[UIView animateWithDuration:animTime
 		animations:^(void){
 			[self layoutSubviews];
-
+            
             if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"14.0") && SYSTEM_VERSION_LESS_THAN(@"17.0")) {
                 SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
                 [iconContentView setClassicFolderIsOpen:NO];
             }
-            		        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderClosed" object:nil];
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderClosed" object:nil];
 
-            UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
-            if (![[[self folderIconView] location] containsString:@"Dock"]) { // ????
-                pageControl.alpha = 1;
-                
-                if (@available(iOS 16, *)) {
-                    SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
-                    UIView *superview = searchPillView.superview;
-                    superview.hidden = NO;
-                }
+            if ([[[self folderIconView] location] containsString:@"Dock"]) {
+                showPageControl15(rootFolderController);
+                showPageControl16(rootFolderController);
             } else {
-                pageControl.alpha = 1;
-                
-                if (@available(iOS 16, *)) {
-                    SBHSearchPillView *searchPillView = [[rootFolderController contentView] valueForKey:@"_pageControl"];
-                    UIView *superview = searchPillView.superview;
-                    superview.hidden = NO;
-                }
+                showPageControl15(rootFolderController);
+                showPageControl16(rootFolderController);
             }
             
 			[rootContentView layoutSubviews];
@@ -557,6 +549,11 @@ BOOL isFlipped;
 		} else {
 			UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
 			pageControl.alpha = 1;
+            
+            if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"15.0") && SYSTEM_VERSION_LESS_THAN(@"16.0")) {
+                SBIconListPageControl *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
+                pageControl.hidden = NO;
+            }
 		}
 
 		self.superview.clipsToBounds = YES;

@@ -64,30 +64,71 @@ static const char *kCSFolderIconIdentifier;
 - (void)layoutSubviews {
 	%orig;
 
-	SBIconListView *iconListView = nil;
-    if ([self respondsToSelector:@selector(_currentIconListView)])
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"15.0") && SYSTEM_VERSION_LESS_THAN(@"16.0")) {
+        SBIconListView *iconListView = nil;
+        if ([self respondsToSelector:@selector(_currentIconListView)])
             iconListView = [self _currentIconListView];
         else
             iconListView = [self currentIconListView];
-	[iconListView setClassicFolderInDock:[self classicFolderInDock]];
-	[iconListView setClassicFolderFrame:[self classicFolderFrame]];
-	[iconListView setClassicFolderShift:[self classicFolderShift]];
-	[iconListView setClassicFolderIconView:[self classicFolderIconView]];
-	[iconListView layoutIconsNow];
-
-	CGRect classicFolderFrame = [self classicFolderFrame];
-
-	if (![self classicFolderInDock]){
-		if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad ||
-			UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])){
-			UIView *dockView = [self dockView];
-			CGRect dockViewFrame = dockView.frame;
-			dockViewFrame.origin.y += classicFolderFrame.size.height;
-			dockView.frame = dockViewFrame;
-		}
+        [iconListView setClassicFolderInDock:[self classicFolderInDock]];
+        [iconListView setClassicFolderFrame:[self classicFolderFrame]];
+        [iconListView setClassicFolderShift:[self classicFolderShift]];
+        [iconListView setClassicFolderIconView:[self classicFolderIconView]];
+        [iconListView layoutIconsNow];
         
-        [[self classicFolderIconView] _applyIconLabelAlpha:0.0];
-	}
+        CGRect classicFolderFrame = [self classicFolderFrame];
+        
+        if (![self classicFolderInDock]){
+            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad ||
+                UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])){
+                UIView *dockView = [self dockView];
+                CGRect dockViewFrame = dockView.frame;
+                dockViewFrame.origin.y += classicFolderFrame.size.height;
+                dockView.frame = dockViewFrame;
+            }
+            
+            UIView *pageControlView = [self valueForKey:@"_pageControl"];
+            CGRect pageControlViewFrame = pageControlView.frame;
+            pageControlViewFrame.origin.y += classicFolderFrame.size.height;
+            pageControlView.frame = pageControlViewFrame;
+            
+            [[self classicFolderIconView] _applyIconLabelAlpha:0.0];
+            
+        } else {
+            
+            UIView *pageControlView = [self valueForKey:@"_pageControl"];
+            CGRect pageControlViewFrame = pageControlView.frame;
+            pageControlViewFrame.origin.y += classicFolderFrame.size.height -2;
+            pageControlView.frame = pageControlViewFrame;
+        }
+    }
+    
+    if (@available(iOS 16, *)) {
+        SBIconListView *iconListView = nil;
+        if ([self respondsToSelector:@selector(_currentIconListView)])
+            iconListView = [self _currentIconListView];
+        else
+            iconListView = [self currentIconListView];
+        [iconListView setClassicFolderInDock:[self classicFolderInDock]];
+        [iconListView setClassicFolderFrame:[self classicFolderFrame]];
+        [iconListView setClassicFolderShift:[self classicFolderShift]];
+        [iconListView setClassicFolderIconView:[self classicFolderIconView]];
+        [iconListView layoutIconsNow];
+        
+        CGRect classicFolderFrame = [self classicFolderFrame];
+        
+        if (![self classicFolderInDock]){
+            if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad ||
+                UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])){
+                UIView *dockView = [self dockView];
+                CGRect dockViewFrame = dockView.frame;
+                dockViewFrame.origin.y += classicFolderFrame.size.height;
+                dockView.frame = dockViewFrame;
+            }
+            
+            [[self classicFolderIconView] _applyIconLabelAlpha:0.0];
+        }
+    }
 }
 
 %end
