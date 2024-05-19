@@ -105,13 +105,11 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 	if (isModern){
         SBWallpaperEffectView *backView = [[%c(SBWallpaperEffectView) alloc] initWithWallpaperVariant:1];
-        
         if ([[UITraitCollection currentTraitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark) {
-            [backView setStyle:14];
+            [backView setStyle:28];
         } else {
-            [backView setStyle:12];
+            [backView setStyle:26];
         }
-        
         backView.layer.cornerRadius = 15;
         [backView setClipsToBounds:YES];
         [containerView addSubview:backView];
@@ -152,13 +150,11 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 	}
 	if (isModern){
         SBWallpaperEffectView *arrowView = [[%c(SBWallpaperEffectView) alloc] initWithWallpaperVariant:1];
-        
         if ([[UITraitCollection currentTraitCollection] userInterfaceStyle] == UIUserInterfaceStyleDark) {
-            [arrowView setStyle:14];
+            [arrowView setStyle:28];
         } else {
-            [arrowView setStyle:12];
+            [arrowView setStyle:26];
         }
-        
         [arrowView setClipsToBounds:YES];
         [arrowView setFrame:CGRectMake(0, 0, 38, 12)];
 		
@@ -377,18 +373,18 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
             SBWallpaperEffectView *backView = (SBWallpaperEffectView *)[self backdropView];
             if (backView) {
                 if (currentTraitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                    [backView setStyle:14];
+                    [backView setStyle:28];
                 } else {
-                    [backView setStyle:12];
+                    [backView setStyle:26];
                 }
             }
             
             SBWallpaperEffectView *arrowView = (SBWallpaperEffectView *)[self arrowView];
             if (arrowView) {
                 if (currentTraitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
-                    [arrowView setStyle:14];
+                    [arrowView setStyle:28];
                 } else {
-                    [arrowView setStyle:12];
+                    [arrowView setStyle:26];
                 }
             
                 [self updateArrowViewMask:arrowView];
