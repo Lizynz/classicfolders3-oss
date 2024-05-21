@@ -41,6 +41,7 @@ static const char *kCSFolderTopLineRightIdentifier;
 @end
 
 BOOL isFlipped;
+static NSInteger iconRows = 0;
 
 // Only iOS 15
 static void showPageControl15(SBRootFolderController *rootFolderController) {
@@ -445,25 +446,24 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 %new;
 - (NSInteger)getMaximumIconRowsForPages {
-	NSInteger iconRows = 0;
-
-	CGFloat maxIconColumns = [[self currentIconListView] iconColumnsForCurrentOrientation];
-	CGFloat maxIconRows = [[self currentIconListView] iconRowsForCurrentOrientation];
-
-	if ([self isEditing])
-		return maxIconRows;
-
-	NSArray *iconListViews = [self iconListViews];
-	for (SBIconListView *iconListView in iconListViews){
-		NSArray *icons = [iconListView visibleIcons];
-		NSInteger rowsOfIcons = ceilf([icons count]/maxIconColumns);
-
-		if (rowsOfIcons > maxIconRows)
-			rowsOfIcons = maxIconRows;
-		if (rowsOfIcons > iconRows)
-			iconRows = rowsOfIcons;
-	}
-	return iconRows;
+    if ([self isEditing]) {
+        return [[self currentIconListView] iconRowsForCurrentOrientation];
+    }
+    
+    CGFloat maxIconColumns = [[self currentIconListView] iconColumnsForCurrentOrientation];
+    CGFloat maxIconRows = [[self currentIconListView] iconRowsForCurrentOrientation];
+        
+    NSArray *iconListViews = [self iconListViews];
+    for (SBIconListView *iconListView in iconListViews) {
+        NSArray *icons = [iconListView visibleIcons];
+        NSInteger rowsOfIcons = ceilf([icons count] / maxIconColumns);
+        
+        if (rowsOfIcons > maxIconRows)
+            rowsOfIcons = maxIconRows;
+        if (rowsOfIcons > iconRows)
+            iconRows = rowsOfIcons;
+    }
+    return iconRows;
 }
 
 %new;
@@ -516,7 +516,13 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 	[self setGestureView:gestureView];
 	[scalingView insertSubview:[gestureView autorelease] belowSubview:containerView];
-
+    
+    if ([self isEditing]) {
+        // nothing
+    } else {
+        iconRows = 0;
+    }
+    
 	float animTime = ((float)[self getMaximumIconRowsForPages] * 0.25);
 	if (animTime > 0.4)
 		animTime = 0.4;
@@ -555,6 +561,12 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
+    
+    if ([self isEditing]) {
+        // nothing
+    } else {
+        iconRows = 0;
+    }
 
 	float animTime = ((float)[self getMaximumIconRowsForPages] * 0.25);
 	if (animTime > 0.4)
