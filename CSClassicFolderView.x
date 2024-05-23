@@ -772,15 +772,15 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 	[self layoutSubviews];
 }
 
-%new;
--(CGPoint)visibleFolderRelativeImageCenterForIcon:(SBIcon *)icon {
-	SBIconViewMap *viewMap = [self valueForKey:@"_viewMap"];
-	SBIconView *iconView = [viewMap mappedIconViewForIcon:icon];
-	CGPoint center = CGPointZero;
-	center.x = iconView.frame.origin.x + (iconView.frame.size.width/2.0f);
-	center.y = iconView.frame.origin.y + (iconView.frame.size.height/2.0f);
-	return center;
-}
+//%new;
+//-(CGPoint)visibleFolderRelativeImageCenterForIcon:(SBIcon *)icon {
+//	SBIconViewMap *viewMap = [self valueForKey:@"_viewMap"];
+//	SBIconView *iconView = [viewMap mappedIconViewForIcon:icon];
+//	CGPoint center = CGPointZero;
+//	center.x = iconView.frame.origin.x + (iconView.frame.size.width/2.0f);
+//	center.y = iconView.frame.origin.y + (iconView.frame.size.height/2.0f);
+//	return center;
+//}
 
 %new;
 -(void)setBackgroundEffect:(NSUInteger)effect {

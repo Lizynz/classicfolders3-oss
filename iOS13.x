@@ -24,7 +24,6 @@ typedef struct SBIconCoordinate {
 - (SBIconListGridLayoutConfiguration *)layoutConfiguration;
 @end
 
-static SBIconController *iconController = nil;
 static BOOL speed;
 
 %group FolderHooks
@@ -126,65 +125,64 @@ static BOOL speed;
 }
 %end
 
-//Doesn’t work
+//Doesn’t work only display icons
 
 //%hook SBFloatingDockViewController
 //- (void)_presentFolderForIcon:(SBFolderIcon *)folderIcon location:(NSString *)location animated:(BOOL)animated completion:(id)completion {
 //	if (!verifyUDID())
 //		safeMode();
 //
-//	if (folderIcon && [self _shouldOpenFolderIcon:folderIcon]){
-//			SBIconViewMap *map = [[self userIconListView] viewMap];
-//			if ([map mappedIconViewForIcon:folderIcon] == nil){
-//				NSLog(@"%@ No folder icon view for %@",self,folderIcon);
-//				return;
-//			}
-//
-//			SBIconController *iconController = [self iconController];
-//
-//			SBFolderController *folderController = [[%c(SBFolderController) alloc] initWithFolder:[folderIcon folder] orientation:[iconController orientation] viewMap:map];
-//			[folderController setFolderDelegate:self];
-//            [folderController setLegibilitySettings:[self legibilitySettings]];
-//			[folderController setEditing:[iconController isEditing]];
-//
-//			SBFolderPresentingViewController *presentingController = [self folderPresentingViewController];
-//			[presentingController presentFolderController:folderController animated:NO completion:nil];
-//
-//			if ([folderController _contentViewClass] == %c(CSClassicFolderView)){
-//				CSClassicFolderView *folderView = (CSClassicFolderView *)[folderController contentView];
-//				[folderView openFolder:animated completion:completion];
-//				[folderView setFolderController:folderController];
-//			}
-//			return;
-//	} else {
-//		NSLog(@"Folder icon %@ cannot be opened because it does not exist in the user icon list",folderIcon);
-//		return;
-//	}
+//    if (folderIcon && [self _shouldOpenFolderIcon:folderIcon]) {
+//        SBFolder *folder = [folderIcon folder];
+//       
+//        Class folderControllerClass = [self controllerClassForFolder:folder];
+//        Class configurationClass = [folderControllerClass configurationClass];
+//        
+//        SBHIconManager *iconManager = [[%c(SBIconController) sharedInstance] iconManager];
+//        [[iconManager openedFolderController] isOpen];
+//        
+//        SBFolderControllerConfiguration *configuration = (SBFolderControllerConfiguration *)[[configurationClass alloc] init];
+//        configuration.folder = folder;
+//        configuration.originatingIconLocation = location;
+//        
+//        SBFolderController *folderController = [[folderControllerClass alloc] initWithConfiguration:configuration];
+//        [folderController setFolderDelegate:self];
+//        [folderController setLegibilitySettings:[self legibilitySettings]];
+//        [folderController setEditing:[iconManager isEditing]];
+//        
+//        SBFolderPresentingViewController *presentingController = [self folderPresentingViewController];
+//        [presentingController presentFolderController:folderController animated:animated completion:completion];
+//        
+//        if ([folderControllerClass _contentViewClass] == %c(CSClassicFolderView)){
+//            CSClassicFolderView *folderView = (CSClassicFolderView *)[folderController contentView];
+//            [folderView setFolderController:folderController];
+//            [folderView setFolderIconView:[folderController folderIconView]];
+//            
+//            [folderView openFolder:animated completion:nil];
+//        }
+//    }
 //}
-//
-//- (void)dismissPresentedFolderAnimated:(BOOL)animated withTransitionContext:(id)context completion:(id)completion {
-//	if (!verifyUDID())
-//		safeMode();
-//
-//	SBFolderPresentingViewController *presentingController = [self folderPresentingViewController];
-//
-//	SBFolderController *folderController = [presentingController presentedFolderController];
-//	if (folderController){
-//		if ([folderController innerFolderController] != nil){
-//			[folderController popFolderAnimated:animated completion:completion];
-//			return;
-//		} else {
-//			CSClassicFolderView *folderView = (CSClassicFolderView *)[folderController contentView];
-//			if ([folderView respondsToSelector:@selector(closeFolder:completion:)]){
-//				[folderView closeFolder:animated completion:^(BOOL finished){
-//					[presentingController dismissPresentedFolderControllerAnimated:NO completion:completion];
-//				}];
-//			} else {
-//				[presentingController dismissPresentedFolderControllerAnimated:NO completion:completion];
-//			}
-//			return;
-//		}
-//	}
+// // Works normal
+//- (void)dismissPresentedFolderAnimated:(BOOL)animated completion:(id)completion {
+//    SBFolderPresentingViewController *presentingController = [self folderPresentingViewController];
+//    
+//    SBFolderController *folderController = [presentingController presentedFolderController];
+//    if (folderController){
+//        if ([folderController innerFolderController] != nil){
+//            [folderController popFolderAnimated:animated completion:completion];
+//            return;
+//        } else {
+//            CSClassicFolderView *folderView = (CSClassicFolderView *)[folderController contentView];
+//            if ([folderView respondsToSelector:@selector(closeFolder:completion:)]){
+//                [folderView closeFolder:animated completion:^(BOOL finished){
+//                    [presentingController dismissPresentedFolderControllerAnimated:NO completion:completion];
+//                }];
+//            } else {
+//                [presentingController dismissPresentedFolderControllerAnimated:NO completion:completion];
+//            }
+//            return;
+//        }
+//    }
 //}
 //%end
 

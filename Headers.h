@@ -13,7 +13,7 @@
 -(id)initWithWallpaperVariant:(int)wallpaperVariant;
 @end
 
-@class SBIcon, SBIconView, SBIconContentView, SBIconViewMap, SBFolderIcon, SBFolder, SBRootFolder, SBFolderView, SBFolderController, SBRootFolderController;
+@class SBIcon, SBIconView, SBIconContentView, SBFolderIcon, SBFolder, SBRootFolder, SBFolderView, SBFolderController, SBRootFolderController;
 
 @interface SBApplication : NSObject
 @end
@@ -23,6 +23,8 @@
 
 @interface SBHIconManager : NSObject
 - (SBFolderController*)openedFolderController;
+- (BOOL)isEditing;
+- (id)legibilitySettings;
 - (void)closeFolderAnimated:(BOOL)arg1 withCompletion:(id)arg2;
 @end
 
@@ -61,8 +63,6 @@
 - (NSArray *)icons;
 - (NSArray *)visibleIcons;
 - (void)layoutIconsNow;
-
-- (SBIconViewMap *)viewMap;
 
 - (BOOL) classicFolderFrameSet;
 - (CGRect) classicFolderFrame;
@@ -150,6 +150,7 @@
 - (void)setFolderController:(SBFolderController *)folderController;
 - (CGFloat)magnificationFraction;
 - (void)setMagnificationFraction:(CGFloat)magnificationFraction;
+- (void)updateArrowViewMask:(UIView *)arrowView;
 
 - (UIView *)topLineLeft;
 - (void)setTopLineLeft:(UIView *)topLineLeft;
@@ -275,7 +276,8 @@
 - (SBIconController *)iconController;
 - (BOOL)_shouldOpenFolderIcon:(id)arg1;
 - (id)legibilitySettings;
-- (void)dismissPresentedFolderAnimated:(BOOL)animated withTransitionContext:(id)context completion:(id)completion;
+- (void)dismissPresentedFolderAnimated:(BOOL)animated completion:(id)completion;
+- (BOOL)pushNestedViewController:(SBFolderController *)folder animated:(BOOL)animated withCompletion:(id)completion;
 @end
 
 @interface SBHSearchPillView : UIView //iOS 16
