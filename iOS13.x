@@ -236,7 +236,7 @@ static BOOL speed;
         
         [self configureInnerFolderControllerConfiguration:configuration];
         
-        if ([location isEqual:@"SBIconLocationAppLibraryCategoryPod"] || [location isEqual:@"SBIconLocationAppLibraryCategoryPodRecents"]) {
+        if ([location isEqual:@"SBIconLocationAppLibraryCategoryPod"] || [location isEqual:@"SBIconLocationAppLibraryCategoryPodRecents"]) { //Fix animation App Library
             BOOL aniLib = YES;
             
             SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
@@ -250,17 +250,32 @@ static BOOL speed;
             }];
         }
         
-        if ([location isEqual:@"SBIconLocationRoot"] || [location isEqual:@"SBIconLocationDock"]) { //Fix animation
-            
+        if ([location isEqual:@"SBIconLocationRoot"] || [location isEqual:@"SBIconLocationDock"]) { // Fix animation and reachability
             SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
-            [self pushNestedViewController:innerController animated:speed withCompletion:^(BOOL finished){
-                if ([folderControllerClass _contentViewClass] == %c(CSClassicFolderView)){
-                    CSClassicFolderView *folderView = (CSClassicFolderView *)[innerController contentView];
-                    [folderView setFolderController:innerController];
-                    [folderView setFolderIconView:[innerController folderIconView]];
-                    [folderView openFolder:animated completion:nil];
-                }
-            }];
+            
+            if (animated) {
+                [UIView animateWithDuration:0.0 animations:^{
+                    [self pushNestedViewController:innerController animated:speed withCompletion:completion];
+                } completion:^(BOOL finished) {
+                    if ([folderControllerClass _contentViewClass] == %c(CSClassicFolderView)) {
+                        CSClassicFolderView *folderView = (CSClassicFolderView *)[innerController contentView];
+                        [folderView setFolderController:innerController];
+                        [folderView setFolderIconView:[innerController folderIconView]];
+                        [folderView openFolder:animated completion:nil];
+                    }
+                }];
+            } else {
+                [UIView animateWithDuration:0.0 animations:^{
+                    [self pushNestedViewController:innerController animated:speed withCompletion:completion];
+                } completion:^(BOOL finished) {
+                    if ([folderControllerClass _contentViewClass] == %c(CSClassicFolderView)) {
+                        CSClassicFolderView *folderView = (CSClassicFolderView *)[innerController contentView];
+                        [folderView setFolderController:innerController];
+                        [folderView setFolderIconView:[innerController folderIconView]];
+                        [folderView openFolder:NO completion:nil];
+                    }
+                }];
+            }
         }
     }
 }

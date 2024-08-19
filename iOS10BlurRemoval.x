@@ -8,12 +8,6 @@
 	%orig;
 }
 %end
-
-%hook SBFolderIconZoomAnimator
-- (instancetype)initWithOuterController:(SBFolderController *)outerController innerController:(SBFolderController *)innerController folderIcon:(SBFolderIcon *)folderIcon {
-	return nil;
-}
-%end
 %end
 
 %group BlurRemoval13
