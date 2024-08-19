@@ -1078,10 +1078,19 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 //Thank you https://github.com/udevsharold/bakgrunnur/blob/2f9c987f613b8aa1e42b6f2b622e1a0f9ce1a9ad/Bakgrunnur.xm#L395
 %hook SBIconView
 - (long long)currentLabelAccessoryType {
-    long long originalValue = %orig;
     
-    isFlipped = [self.location containsString:@"Dock"] ? YES : NO;
+    if (@available(iOS 17, *)) { //Temporary solution
+        return %orig;
+    }
     
-    return originalValue;
+    if (@available(iOS 15, *)) {
+        long long originalValue = %orig;
+        
+        isFlipped = [self.location containsString:@"Dock"] ? YES : NO; //Safe mode on iOS 17 - 18
+        
+        return originalValue;
+    }
+    
+    return %orig;
 }
 %end
