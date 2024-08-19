@@ -163,8 +163,7 @@ static BOOL lockClassicIcon = NO;
 %end
 
 %ctor {
-	dlopen("/Library/MobileSubstrate/DynamicLibraries/AnemoneIcons.dylib", RTLD_LAZY);
-	if ([[CSClassicFolderSettingsManager sharedInstance] enabled]){
-		%init(IconHook);
-	}
+    if ([[CSClassicFolderSettingsManager sharedInstance] enabled]){
+        %init(IconHook);
+    }
 }

@@ -9,8 +9,8 @@
 @end
 
 @interface SBWallpaperEffectView : UIView
--(void)setStyle:(int)style;
--(id)initWithWallpaperVariant:(int)wallpaperVariant;
+- (void)setStyle:(int)style;
+- (id)initWithWallpaperVariant:(int)wallpaperVariant;
 @end
 
 @class SBIcon, SBIconView, SBIconContentView, SBFolderIcon, SBFolder, SBRootFolder, SBFolderView, SBFolderController, SBRootFolderController;
@@ -46,13 +46,12 @@
 @property (nonatomic,copy) NSString * location; //iOS 14 +
 //iOS 13.0 - 13.3
 - (void)setAllIconElementsButLabelToHidden:(BOOL)hidden;
-//iOS 13.4-13.5
+//iOS 13.4+
 - (void)setAllIconElementsButLabelHidden:(BOOL)hidden;
 
-//iOS 7 - 13
--(void)_applyIconLabelAlpha:(CGFloat)alpha;
--(void)setIconImageAlpha:(CGFloat)alpha;
--(BOOL)isInDock;
+//iOS 7+
+- (void)_applyIconLabelAlpha:(CGFloat)alpha;
+- (void)setIconImageAlpha:(CGFloat)alpha;
 @end
 
 @interface SBIconListView : UIView
@@ -109,11 +108,8 @@
 - (UIScrollView *)scrollView;
 - (SBIconListView *)currentIconListView; //iOS 13+
 - (NSArray *)iconListViews;
-
 - (void)resetIconListViews;
-
 - (void)_setFolderName:(NSString *)folderName;
-
 @end
 
 @interface SBFolderContainerView : UIView
@@ -123,9 +119,7 @@
 
 @interface CSClassicFolderView : SBFolderView <UITextFieldDelegate>
 - (void)classicFolderInitWithFolder:(SBFolder *)folder orientation:(int)orientation;
-
 - (UIImage *)flipImage:(UIImage *)image;
-
 - (UIView *)containerView;
 - (void)setContainerView:(UIView *)containerView;
 - (UIView *)backdropView;
@@ -151,19 +145,16 @@
 - (CGFloat)magnificationFraction;
 - (void)setMagnificationFraction:(CGFloat)magnificationFraction;
 - (void)updateArrowViewMask:(UIView *)arrowView;
-
 - (UIView *)topLineLeft;
 - (void)setTopLineLeft:(UIView *)topLineLeft;
 - (UIView *)topLineRight;
 - (void)setTopLineRight:(UIView *)topLineRight;
-
 - (CGRect)wantedFrame;
 - (CGFloat)wantedShift:(CGRect)frame;
 - (void)openFolder:(BOOL)animated completion:(void (^)(BOOL completed))completion;
 - (void)closeFolder:(BOOL)animated completion:(void (^)(BOOL completed))completion;
 - (NSArray *)getVisibleViewsUnderFolder;
 - (NSInteger)getMaximumIconRowsForPages;
-
 - (void)resetIconListViews;
 @end
 
@@ -185,9 +176,7 @@
 @end
 
 @interface SBFolderController : NSObject
-- (SBFolderController *)initWithConfiguration:(SBFolderControllerConfiguration *)configuration; //iOS 13
-
-
+- (SBFolderController *)initWithConfiguration:(SBFolderControllerConfiguration *)configuration; //iOS 13+
 - (SBFolderController *)expandedChildViewController;
 - (SBFolderController *)innerFolderController;
 - (SBFolderController *)outerFolderController;
@@ -198,7 +187,7 @@
 - (Class) _contentViewClass;
 - (void)setEditing:(BOOL)editing;
 
-//iOS 13 only
+//iOS 13+
 + (Class)controllerClassForFolder;
 - (Class)controllerClassForFolder:(SBFolder *)folder;
 + (Class)configurationClass;
@@ -206,12 +195,8 @@
 - (SBFolderControllerConfiguration *)configuration;
 - (void)configureInnerFolderControllerConfiguration:(SBFolderControllerConfiguration *)configuration;
 - (SBFolderIconView *)folderIconView;
-
-//iOS 7 - 12 only
 - (SBFolder *)folder;
 - (NSObject<SBFolderControllerDelegate> *) delegate;
-
-//iOS 11 Only
 - (BOOL)shouldOpenFolderIcon:(SBFolderIcon *)folderIcon;
 - (BOOL)pushNestedViewController:(SBFolderController *)folder animated:(BOOL)animated withCompletion:(id)completion;
 - (void)popNestedViewControllerAnimated:(BOOL)animated withCompletion:(id)completion;
@@ -227,10 +212,8 @@
 - (void)setClassicFolderFrame:(CGRect)frame;
 - (BOOL)classicFolderInDock;
 - (void)setClassicFolderInDock:(BOOL)inDock;
-
 - (SBIconView *)classicFolderIconView;
 - (void)setClassicFolderIconView:(SBIconView *)iconView;
-
 - (CGFloat) classicFolderShift;
 - (void)setClassicFolderShift:(CGFloat)shift;
 @end
@@ -278,9 +261,10 @@
 - (id)legibilitySettings;
 - (void)dismissPresentedFolderAnimated:(BOOL)animated completion:(id)completion;
 - (BOOL)pushNestedViewController:(SBFolderController *)folder animated:(BOOL)animated withCompletion:(id)completion;
+- (void)dismissPresentedFolderAnimated:(bool)arg1 withTransitionContext:(id)arg2 completion:(id)arg3;
 @end
 
-@interface SBHSearchPillView : UIView //iOS 16
+@interface SBHSearchPillView : UIView //iOS 16+
 @end
 
 @interface SBSApplicationShortcutItem : NSObject
@@ -293,8 +277,4 @@
 
 @interface _UIBackdropView : UIView
 - (id)initWithFrame:(CGRect)arg1 autosizesToFitSuperview:(BOOL)arg2 settings:(id)arg3;
-@end
-@interface SBFloatingDockView : UIView
--(void)HideDock ;
--(void)ShowDock;
 @end

@@ -58,7 +58,7 @@ static void hidePageControl15(SBRootFolderController *rootFolderController) {
     }
 }
 
-// iOS 16 - 17
+// iOS 16 - 18
 static void showPageControl16(SBRootFolderController *rootFolderController) {
     if (@available(iOS 16, *)) {
         UIView *pageControl = [[rootFolderController contentView] valueForKey:@"_pageControl"];
@@ -85,15 +85,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 %new
 - (void)classicFolderInitWithFolder:(SBFolder *)folder orientation:(int)orientation {
-	dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		if (!selfVerify()){
-			safeMode();
-		}
-		if (!deepVerifyUDID()){
-			safeMode();
-		}
-	});
-
 	UIView *scalingView = [self valueForKey:@"_scalingView"];
 
 	CGRect wantedFrame = [self wantedFrame];
@@ -135,9 +126,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 		[self setBackdropView:backView];
 		[backView release];
 	}
-
-	if (!verifyUDID())
-		safeMode();
 
 	CGFloat adjust = 0.0f;
 	if ([[UIScreen mainScreen] bounds].size.width > 320){
@@ -239,9 +227,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 		[self setArrowShadowView:arrowShadowView];
 		[arrowShadowView release];
 
-		if (!verifyUDID())
-			safeMode();
-
 		UIImageView *arrowBorderView = [[UIImageView alloc] initWithFrame:arrowFrame];
 		if ([[UIDevice currentDevice] userInterfaceIdiom] != UIUserInterfaceIdiomPad){
 			if (isFlipped){
@@ -321,9 +306,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
     [self setLabelView:titleLabel];
     [containerView addSubview:[titleLabel autorelease]];
 
-    if (!verifyUDID())
-		safeMode();
-
     UITextField *labelEditView = [[CSClassicFolderTextField alloc] initWithFrame:CGRectZero];
     [labelEditView setText:[[self folder] displayName]];
     if (isModern)
@@ -362,7 +344,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 	objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:NO], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 	[self setMagnificationFraction:0.0f];
-
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
@@ -389,7 +370,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
                 }
             
                 [self updateArrowViewMask:arrowView];
-                
             }
         }
     }
@@ -423,7 +403,7 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 	return %c(SBFolderIconListView);
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField {
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
 	if (textField == [self labelEditView]){
 		[textField resignFirstResponder];
 		[self _setFolderName:[textField text]];
@@ -468,8 +448,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 %new;
 - (NSArray *)getVisibleViewsUnderFolder {
-    if (!verifyUDID())
-        safeMode();
     SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
     UIView *rootContentView = [[rootFolderController contentView] _currentIconListView];
     NSMutableArray *views = [rootContentView.subviews mutableCopy];
@@ -493,8 +471,7 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 	self.superview.clipsToBounds = NO;
 	UIView *containerView = [self containerView];
-
-	SBIconView *folderIconView = [self folderIconView];
+    
     BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"];
 
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
@@ -535,8 +512,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
             SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
             [iconContentView setClassicFolderIsOpen:YES];
         }
-    
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderOpen" object:nil];
         
         if ([[[self folderIconView] location] containsString:@"Dock"]) {
             hidePageControl15(rootFolderController);
@@ -556,8 +531,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 		return;
 
 	objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:NO], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-
-	SBIconView *folderIconView = [self folderIconView];
 
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
@@ -585,8 +558,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
                 SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
                 [iconContentView setClassicFolderIsOpen:NO];
             }
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderClosed" object:nil];
 
             if ([[[self folderIconView] location] containsString:@"Dock"]) {
                 showPageControl15(rootFolderController);
@@ -612,7 +583,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 		SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
 		[iconContentView setClassicFolderIsOpen:NO];
-            		        [[NSNotificationCenter defaultCenter] postNotificationName:@"FolderClosed" object:nil];
 
 		if (![[[self folderIconView] location] containsString:@"Dock"]){
 			[rootContentView setClassicFolderShift:0.0f];
@@ -739,7 +709,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 %new;
 - (CGFloat)wantedShift:(CGRect)wantedFrame {
 	CGFloat yShift = 0.0f;
-	SBIconView *folderIconView = [self folderIconView];
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
 
@@ -754,14 +723,14 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 }
 
 %new;
--(void)setBackgroundAlpha:(CGFloat)alpha {
+- (void)setBackgroundAlpha:(CGFloat)alpha {
 	[[self backdropView] setAlpha:alpha];
 	[[self arrowView] setAlpha:alpha];
 	[[self arrowShadowView] setAlpha:alpha];
 	[[self labelView] setAlpha:alpha];
 }
 
--(void)fadeContentForMagnificationFraction:(CGFloat)magnificationFraction {
+- (void)fadeContentForMagnificationFraction:(CGFloat)magnificationFraction {
 	%orig;
 	[[self backdropView] setAlpha:(1.0f-magnificationFraction)];
 	[[self arrowView] setAlpha:(1.0f-magnificationFraction)];
@@ -772,22 +741,10 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 	[self layoutSubviews];
 }
 
-//%new;
-//-(CGPoint)visibleFolderRelativeImageCenterForIcon:(SBIcon *)icon {
-//	SBIconViewMap *viewMap = [self valueForKey:@"_viewMap"];
-//	SBIconView *iconView = [viewMap mappedIconViewForIcon:icon];
-//	CGPoint center = CGPointZero;
-//	center.x = iconView.frame.origin.x + (iconView.frame.size.width/2.0f);
-//	center.y = iconView.frame.origin.y + (iconView.frame.size.height/2.0f);
-//	return center;
-//}
-
 %new;
--(void)setBackgroundEffect:(NSUInteger)effect {
-	
-}
+- (void)setBackgroundEffect:(NSUInteger)effect {}
 
--(void)didRotateFromInterfaceOrientation:(int)interfaceOrientation {
+- (void)didRotateFromInterfaceOrientation:(int)interfaceOrientation {
 	%orig;
 	[self layoutSubviews];
 }
@@ -1128,67 +1085,3 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
     return originalValue;
 }
 %end
-
-
-
-%hook SBFloatingDockView 
-
--(void)layoutSubviews 
-
-{
-	%orig;
-	
-[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(HideDock) name:@"FolderOpen" object:nil];
-[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(ShowDock) name:@"FolderClosed" object:nil];
-
-
-
-}
-
-%new
--(void)HideDock 
-{
-    [UIView animateWithDuration:0.3 animations:^{
-        self.alpha = 0.0;
-    } completion:^(BOOL finished) {
-        self.hidden = YES;
-    }];
-}
-
-%new
--(void)ShowDock 
-{
-    self.hidden = NO;
-    [UIView animateWithDuration:0.3 animations:^{
-        self.alpha = 1.0;
-    }];
-}
-
-%end
-
-
-%ctor {
-	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		%init;
-		if (!selfVerify()){
-			unlink("/var/mobile/Library/Preferences/org.coolstar.classicfolders2.license");
-			unlink("/usr/lib/cslicenses/org.coolstar.classicfolders2.license");
-#if __LP64__
-#else
-			unlink("/var/mobile/Library/Preferences/org.coolstar.classicfolders2.license.signed");
-			unlink("/usr/lib/cslicenses/org.coolstar.classicfolders2.license.signed");
-#endif
-			safeMode();
-		}
-		if (!deepVerifyUDID()){
-			unlink("/var/mobile/Library/Preferences/org.coolstar.classicfolders2.license");
-			unlink("/usr/lib/cslicenses/org.coolstar.classicfolders2.license");
-#if __LP64__
-#else
-			unlink("/var/mobile/Library/Preferences/org.coolstar.classicfolders2.license.signed");
-			unlink("/usr/lib/cslicenses/org.coolstar.classicfolders2.license.signed");
-#endif
-			safeMode();
-		}
-	});
-}

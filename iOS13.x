@@ -129,8 +129,6 @@ static BOOL speed;
 
 //%hook SBFloatingDockViewController
 //- (void)_presentFolderForIcon:(SBFolderIcon *)folderIcon location:(NSString *)location animated:(BOOL)animated completion:(id)completion {
-//	if (!verifyUDID())
-//		safeMode();
 //
 //    if (folderIcon && [self _shouldOpenFolderIcon:folderIcon]) {
 //        SBFolder *folder = [folderIcon folder];
@@ -187,9 +185,7 @@ static BOOL speed;
 //%end
 
 %hook SBFolderController
--(BOOL)pushFolderIcon:(SBFolderIcon *)folderIcon location:(NSString *)location animated:(BOOL)animated completion:(id)completion {
-	if (!verifyUDID())
-		safeMode();
+- (BOOL)pushFolderIcon:(SBFolderIcon *)folderIcon location:(NSString *)location animated:(BOOL)animated completion:(id)completion {
 	
 	if (![self isOpen]){
 		NSLog(@"%@ Unable to open folder icon %@ because we aren't actually open!",self,folderIcon);
@@ -241,9 +237,6 @@ static BOOL speed;
 }
 
 - (BOOL)popFolderAnimated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
-	if (!verifyUDID())
-		safeMode();
-
 	SBFolderController *innerController = [self innerFolderController];
 	if (innerController != nil){
 		if ([innerController innerFolderController] != nil){
