@@ -11,7 +11,7 @@ export SYSROOT = $(THEOS)/sdks/iPhoneOS14.5.sdk
 include $(THEOS)/makefiles/common.mk
 
 TWEAK_NAME = ClassicFolders3
-ClassicFolders3_FILES = $(wildcard *.xm *.m)
+ClassicFolders3_FILES = $(wildcard *.x *.m)
 #ClassicFolders3_FILES += ForceBinds.x
 ClassicFolders3_FRAMEWORKS = IOKit
 
