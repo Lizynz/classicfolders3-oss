@@ -219,38 +219,50 @@ static BOOL speed;
 %hook SBFolderController
 - (BOOL)pushFolderIcon:(SBFolderIcon *)folderIcon location:(NSString *)location animated:(BOOL)animated completion:(id)completion {
 	
-	if (![self isOpen]){
-		NSLog(@"%@ Unable to open folder icon %@ because we aren't actually open!",self,folderIcon);
-		return NO;
-	}
+//	if (![self isOpen]){
+//		NSLog(@"%@ Unable to open folder icon %@ because we aren't actually open!",self,folderIcon);
+//		return NO;
+//	}
 
-	if ((folderIcon != nil) && ([self shouldOpenFolderIcon:folderIcon])){
-		SBFolder *folder = [folderIcon folder];
-
-		Class folderControllerClass = [self controllerClassForFolder:folder];
-		Class configurationClass = [folderControllerClass configurationClass];
-
-		SBFolderControllerConfiguration *configuration = (SBFolderControllerConfiguration *)[[configurationClass alloc] init];
-		configuration.folder = folder;
-		configuration.originatingIconLocation = location;
-
-		[self configureInnerFolderControllerConfiguration:configuration];
-
-		SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
-		[self pushNestedViewController:innerController animated:speed withCompletion:^(BOOL finished){
-			if ([folderControllerClass _contentViewClass] == %c(CSClassicFolderView)){
-				CSClassicFolderView *folderView = (CSClassicFolderView *)[innerController contentView];
-				[folderView setFolderController:innerController];
-				[folderView setFolderIconView:[innerController folderIconView]];
-				[folderView openFolder:animated completion:nil];
-			}
-		}];
-		return YES;
-	} else {
-		NSLog(@"%@ Folder icon %@ cannot be opened because it does not exist on the current page.",self,folderIcon);
-		return NO;
-	}
-	return YES;
+    if ((folderIcon != nil) && ([self shouldOpenFolderIcon:folderIcon])){
+        SBFolder *folder = [folderIcon folder];
+        
+        Class folderControllerClass = [self controllerClassForFolder:folder];
+        Class configurationClass = [folderControllerClass configurationClass];
+        
+        SBFolderControllerConfiguration *configuration = (SBFolderControllerConfiguration *)[[configurationClass alloc] init];
+        configuration.folder = folder;
+        configuration.originatingIconLocation = location;
+        
+        [self configureInnerFolderControllerConfiguration:configuration];
+        
+        if ([location isEqual:@"SBIconLocationAppLibraryCategoryPod"] || [location isEqual:@"SBIconLocationAppLibraryCategoryPodRecents"]) {
+            BOOL aniLib = YES;
+            
+            SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
+            [self pushNestedViewController:innerController animated:aniLib withCompletion:^(BOOL finished) {
+                if ([folderControllerClass _contentViewClass] == %c(CSClassicFolderView)) {
+                    CSClassicFolderView *folderView = (CSClassicFolderView *)[innerController contentView];
+                    [folderView setFolderController:innerController];
+                    [folderView setFolderIconView:[innerController folderIconView]];
+                    [folderView openFolder:animated completion:nil];
+                }
+            }];
+        }
+        
+        if ([location isEqual:@"SBIconLocationRoot"] || [location isEqual:@"SBIconLocationDock"]) { //Fix animation
+            
+            SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
+            [self pushNestedViewController:innerController animated:speed withCompletion:^(BOOL finished){
+                if ([folderControllerClass _contentViewClass] == %c(CSClassicFolderView)){
+                    CSClassicFolderView *folderView = (CSClassicFolderView *)[innerController contentView];
+                    [folderView setFolderController:innerController];
+                    [folderView setFolderIconView:[innerController folderIconView]];
+                    [folderView openFolder:animated completion:nil];
+                }
+            }];
+        }
+    }
 }
 
 - (void)setEditing:(BOOL)arg1 animated:(BOOL)arg2 { // Animation control mode solves the problem when editing folder.
