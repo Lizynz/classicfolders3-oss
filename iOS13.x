@@ -97,10 +97,15 @@ static BOOL speed;
 
 %end
 
-@interface _SBIconGridWrapperView : UIView // Grid Icon
+@interface _SBIconGridWrapperView : UIView // Grid Icon ≤ iOS 17
 @property (nonatomic, assign) CGAffineTransform transform;
 @end
 
+//@interface _SBIconGridImageWrapperView : UIView // Grid Icon iOS 18
+//@property (nonatomic, assign) CGAffineTransform transform;
+//@end
+
+//≤ iOS 17
 %hook _SBIconGridWrapperView
 - (void)layoutSubviews {
     NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
@@ -112,7 +117,9 @@ static BOOL speed;
     %orig;
     
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        CGAffineTransform originalIconView = (self.transform);
+        self.translatesAutoresizingMaskIntoConstraints = YES;
+        self.transform = CGAffineTransformIdentity;
+        CGAffineTransform originalIconView = CGAffineTransformIdentity;
         self.transform = CGAffineTransformMake(
                                                0.77,
                                                originalIconView.b,
@@ -124,6 +131,31 @@ static BOOL speed;
     }
 }
 %end
+
+//iOS 18
+//%hook _SBIconGridImageWrapperView
+//- (void)layoutSubviews {
+//    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+//    if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
+//        %orig;
+//        return;
+//    }
+//    
+//    %orig;
+//    
+//    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+//        CGAffineTransform originalIconView = (self.transform);
+//        self.transform = CGAffineTransformMake(
+//                                               0.77,
+//                                               originalIconView.b,
+//                                               originalIconView.c,
+//                                               0.77,
+//                                               originalIconView.tx,
+//                                               originalIconView.ty
+//                                               );
+//    }
+//}
+//%end
 
 //Doesn’t work only display icons
 

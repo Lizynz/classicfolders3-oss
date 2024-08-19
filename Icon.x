@@ -140,23 +140,22 @@ static BOOL lockClassicIcon = NO;
     }
 
     %orig;
-
-    for (UIView *subview in self.subviews) {
-        if ([subview isKindOfClass:[UIVisualEffectView class]]) {
-            [subview removeFromSuperview];
-        }
+    
+    if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"15.0") && SYSTEM_VERSION_LESS_THAN(@"18.0")) { //No change required on iOS 18
+        
+        self.translatesAutoresizingMaskIntoConstraints = YES;
+        self.transform = CGAffineTransformIdentity;
+        
+        CGAffineTransform originalIconView = self.transform;
+        self.transform = CGAffineTransformMake(
+                                               1.26,
+                                               originalIconView.b,
+                                               originalIconView.c,
+                                               1.26,
+                                               originalIconView.tx - 0.3,
+                                               originalIconView.ty - 0.3
+                                               );
     }
-    
-    UIBlurEffect *blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleRegular];
-    UIVisualEffectView *blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-    
-    blurEffectView.frame = self.bounds;
-    blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    blurEffectView.layer.cornerRadius = 13.5;
-    blurEffectView.layer.masksToBounds = YES;
-    blurEffectView.alpha = 0.7;
-    
-    [self insertSubview:blurEffectView atIndex:0];
 }
 
 %end
