@@ -236,7 +236,7 @@ static BOOL speed;
         
         [self configureInnerFolderControllerConfiguration:configuration];
         
-        if ([location isEqual:@"SBIconLocationAppLibraryCategoryPod"] || [location isEqual:@"SBIconLocationAppLibraryCategoryPodRecents"] || [location isEqual:@"            SBIconLocationAppLibraryCategoryPodSuggestions"]) { //Fix animation App Library and reachability
+        if ([location isEqual:@"SBIconLocationAppLibraryCategoryPod"] || [location isEqual:@"SBIconLocationAppLibraryCategoryPodRecents"] || [location isEqual:@"SBIconLocationAppLibraryCategoryPodSuggestions"]) { //Fix animation App Library and reachability
             BOOL aniLib = YES;
             
             SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
