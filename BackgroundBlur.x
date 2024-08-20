@@ -6,6 +6,7 @@ static UIView *kCSblurView;
 static const char *kCSFolderOpenIdentifier;
 _UIBackdropView *blurView;
 
+%group WallHook
 %hook SBIconContentView
 %new;
 - (void)initBlurView {
@@ -16,57 +17,64 @@ _UIBackdropView *blurView;
     [self addSubview:[blurView autorelease]];
     [self sendSubviewToBack:blurView];
 
-	[self setClassicFolderIsOpen:NO];
+    [self setClassicFolderIsOpen:NO];
 
-	if (!blurBackground)
-		blurView.alpha = 0;
+    if (!blurBackground)
+        blurView.alpha = 0;
 
-	kCSblurView = blurView;
+    kCSblurView = blurView;
 }
 
 //7.x
 - (id)initWithOrientation:(int)orientation {
-	self = %orig;
+    self = %orig;
 
-	[self initBlurView];
+    [self initBlurView];
 
-	return self;
+    return self;
 }
 
 //8.x+
 - (id)initWithOrientation:(int)orientation statusBarHeight:(double)arg2 {
-	self = %orig;
+    self = %orig;
 
-	[self initBlurView];
+    [self initBlurView];
 
-	return self;
+    return self;
 }
 
 %new;
 - (BOOL)classicFolderIsOpen {
-	return [(NSNumber *)objc_getAssociatedObject(self, &kCSFolderOpenIdentifier) boolValue];
+    return [(NSNumber *)objc_getAssociatedObject(self, &kCSFolderOpenIdentifier) boolValue];
 }
 
 %new;
 - (void)setClassicFolderIsOpen:(BOOL)isOpen {
-	objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:isOpen], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-	if (blurBackground == 2){
-		kCSblurView.alpha = isOpen ? 0.9 : 0;
-	}
+    objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:isOpen], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    if (blurBackground == 2){
+        kCSblurView.alpha = isOpen ? 0.9 : 0;
+    }
 }
 
 - (void)layoutSubviews {
-	%orig;
-	[self sendSubviewToBack:kCSblurView];
+    %orig;
+    [self sendSubviewToBack:kCSblurView];
 
-	if (blurBackground == 0)
-		kCSblurView.alpha = 0;
-	else if (blurBackground == 1)
-		kCSblurView.alpha = 0.9;
-	else
-		kCSblurView.alpha = [self classicFolderIsOpen] ? 1 : 0;
+    if (blurBackground == 0)
+        kCSblurView.alpha = 0;
+    else if (blurBackground == 1)
+        kCSblurView.alpha = 0.9;
+    else
+        kCSblurView.alpha = [self classicFolderIsOpen] ? 1 : 0;
 
-	CGRect blurFrame = self.bounds;
-	kCSblurView.frame = blurFrame;
+    CGRect blurFrame = self.bounds;
+    kCSblurView.frame = blurFrame;
 }
 %end
+%end
+
+%ctor {
+    if ([[CSClassicFolderSettingsManager sharedInstance] enabled]){
+        %init(WallHook);
+    }
+}
