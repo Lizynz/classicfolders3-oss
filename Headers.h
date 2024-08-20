@@ -48,6 +48,7 @@
 - (void)setAllIconElementsButLabelToHidden:(BOOL)hidden;
 //iOS 13.4+
 - (void)setAllIconElementsButLabelHidden:(BOOL)hidden;
+- (id)_legibilitySettingsWithPrimaryColor:(UIColor *)color;
 
 //iOS 7+
 - (void)_applyIconLabelAlpha:(CGFloat)alpha;

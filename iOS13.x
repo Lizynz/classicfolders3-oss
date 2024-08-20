@@ -266,7 +266,7 @@ static BOOL speed;
             });
         }
         
-        if ([location isEqual:@"SBIconLocationRoot"] || [location isEqual:@"SBIconLocationDock"]) { // Fix folderanimation and reachability
+        if ([location isEqual:@"SBIconLocationRoot"] || [location isEqual:@"SBIconLocationDock"]) { // Fix folder animation and reachability
             SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
             
             if (animated) {

@@ -5,6 +5,10 @@
 #define isClassic [[CSClassicFolderSettingsManager sharedInstance] classic]
 #define isLegacy [[CSClassicFolderSettingsManager sharedInstance] legacy]
 
+//Color label
+#define labelColor [[CSClassicFolderSettingsManager sharedInstance] labelColor]
+#define ColorLabel(x) [x.location isEqualToString:@"SBIconLocationFolder"]
+
 static const char *kCSFolderOpenIdentifier;
 static const char *kCSFolderMagnificationFractionIdentifier;
 static const char *kCSFolderArrowViewIdentifier;
@@ -296,9 +300,15 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
         [containerView addSubview:[bottomLine autorelease]];
 	}
 
-	UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-    [titleLabel setTextColor:[UIColor whiteColor]];
+    //Color title #1
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
+    if (labelColor == 0) {
+        [titleLabel setTextColor:[UIColor whiteColor]];
+    } else if (labelColor == 1) {
+        [titleLabel setTextColor:[UIColor blackColor]];
+    }
     [titleLabel setText:[[self folder] displayName]];
+    
     if (isModern)
         [titleLabel setFont:[UIFont systemFontOfSize:20.0]];
     else
@@ -1093,4 +1103,19 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
     
     return %orig;
 }
+
+//Color title #2
+- (id)_legibilitySettingsWithParameters:(id)arg1 {
+    id view = %orig;
+    
+    if (ColorLabel(self)) {
+        if (labelColor == 0) {
+            view = [self _legibilitySettingsWithPrimaryColor:[UIColor whiteColor]];
+        } else if (labelColor == 1) {
+            view = [self _legibilitySettingsWithPrimaryColor:[UIColor blackColor]];
+        }
+    }
+    return view;
+}
+
 %end

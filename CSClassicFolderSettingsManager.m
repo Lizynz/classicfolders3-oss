@@ -11,11 +11,12 @@
     return sharedInstance;
 }
 - (CSClassicFolderSettingsManager *)init {
-	self = [super init];
-	_prefs = [[NSUserDefaults alloc] initWithSuiteName:@"org.coolstar.classicfolders"];
+    self = [super init];
+    _prefs = [[NSUserDefaults alloc] initWithSuiteName:@"org.coolstar.classicfolders"];
     [_prefs registerDefaults:@{
         @"enabled": @YES,
         @"mode": @0,
+        @"labelColor":@0,
         @"blurBackground":@0,
         @"classicIcon":@NO,
         @"classicshape": @NO,
@@ -23,42 +24,46 @@
         @"autoCloseFolders": @NO,
         @"speedMultiplier": @1
     }];
-	return self;
+    return self;
 }
 
 - (BOOL)enabled {
-	return [_prefs boolForKey:@"enabled"];
+    return [_prefs boolForKey:@"enabled"];
+}
+
+- (NSInteger)labelColor {
+    return [_prefs integerForKey:@"labelColor"];
 }
 
 - (NSInteger)blurBackground {
-	return [_prefs integerForKey:@"blurBackground"];
+    return [_prefs integerForKey:@"blurBackground"];
 }
 
 - (BOOL)modern {
-	NSInteger mode = [_prefs integerForKey:@"mode"];
-	return (mode == 0);
+    NSInteger mode = [_prefs integerForKey:@"mode"];
+    return (mode == 0);
 }
 
 - (BOOL)classic {
-	NSInteger mode = [_prefs integerForKey:@"mode"];
-	return ((mode == 2) || (mode == 3));
+    NSInteger mode = [_prefs integerForKey:@"mode"];
+    return ((mode == 2) || (mode == 3));
 }
 
 - (BOOL)legacy {
-	NSInteger mode = [_prefs integerForKey:@"mode"];
-	return (mode == 3);
+    NSInteger mode = [_prefs integerForKey:@"mode"];
+    return (mode == 3);
 }
 
 - (BOOL)classicIcon {
-	return [_prefs boolForKey:@"classicIcon"];
+    return [_prefs boolForKey:@"classicIcon"];
 }
 
 - (BOOL)classicShape {
-	return [_prefs boolForKey:@"classicshape"];
+    return [_prefs boolForKey:@"classicshape"];
 }
 
 - (BOOL)outline {
-	return [_prefs boolForKey:@"outline"];
+    return [_prefs boolForKey:@"outline"];
 }
 
 - (BOOL)autoCloseFolders {
@@ -66,6 +71,6 @@
  }
 
 - (CGFloat)speedMultiplier {
-	return [_prefs floatForKey:@"speedMultiplier"];
+    return [_prefs floatForKey:@"speedMultiplier"];
 }
 @end
