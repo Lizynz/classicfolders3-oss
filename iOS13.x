@@ -236,7 +236,7 @@ static BOOL speed;
         
         [self configureInnerFolderControllerConfiguration:configuration];
         
-        if ([location isEqual:@"SBIconLocationAppLibraryCategoryPod"] || [location isEqual:@"SBIconLocationAppLibraryCategoryPodRecents"]) { //Fix animation App Library
+        if ([location isEqual:@"SBIconLocationAppLibraryCategoryPod"] || [location isEqual:@"SBIconLocationAppLibraryCategoryPodRecents"] || [location isEqual:@"            SBIconLocationAppLibraryCategoryPodSuggestions"]) { //Fix animation App Library and reachability
             BOOL aniLib = YES;
             
             SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
@@ -248,9 +248,25 @@ static BOOL speed;
                     [folderView openFolder:animated completion:nil];
                 }
             }];
+            
+            double delayInSeconds = 0.1;
+               dispatch_time_t delayTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+               dispatch_after(delayTime, dispatch_get_main_queue(), ^{
+                   
+                   [UIView animateWithDuration:0.0 animations:^{
+                       [self pushNestedViewController:innerController animated:aniLib withCompletion:completion];
+                   } completion:^(BOOL finished) {
+                       if ([folderControllerClass _contentViewClass] == %c(CSClassicFolderView)) {
+                           CSClassicFolderView *folderView = (CSClassicFolderView *)[innerController contentView];
+                           [folderView setFolderController:innerController];
+                           [folderView setFolderIconView:[innerController folderIconView]];
+                           [folderView openFolder:animated completion:nil];
+                       }
+                   }];
+            });
         }
         
-        if ([location isEqual:@"SBIconLocationRoot"] || [location isEqual:@"SBIconLocationDock"]) { // Fix animation and reachability
+        if ([location isEqual:@"SBIconLocationRoot"] || [location isEqual:@"SBIconLocationDock"]) { // Fix folderanimation and reachability
             SBFolderController *innerController = [(SBFolderController *)[folderControllerClass alloc] initWithConfiguration:configuration];
             
             if (animated) {
