@@ -1,6 +1,6 @@
 Package: org.coolstar.classicfolders2
 Name: ClassicFolders 2
-Depends: mobilesubstrate
+Depends: mobilesubstrate, preferenceloader, firmware(>=15.0), com.ichitaso.iconorder
 Version: 0.0.1
 Architecture: iphoneos-arm
 Description: An awesome MobileSubstrate tweak!

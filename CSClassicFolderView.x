@@ -330,15 +330,14 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
     if (isModern){
     	[labelEditView setBackground:[[UIImage classicFolderImageNamed:@"Modern_textfield_BG"] resizableImageWithCapInsets:UIEdgeInsetsMake(13,8,13,8)]];
     	[labelEditView setTextColor:[UIColor whiteColor]];
-
     	[clearButton setImage:[UIImage classicFolderImageNamed:@"Modern_X"] forState:UIControlStateNormal];
     } else if (isClassic){
     	[labelEditView setBackground:[[UIImage classicFolderImageNamed:@"iOS6_textfield_BG"] resizableImageWithCapInsets:UIEdgeInsetsMake(13,13,13,13)]];
-    
+        [labelEditView setTextColor:[UIColor blackColor]];
     	[clearButton setImage:[UIImage classicFolderImageNamed:@"iOS6_X"] forState:UIControlStateNormal];
     } else {
     	[labelEditView setBackground:[[UIImage classicFolderImageNamed:@"Mavericks/Mavericks_textfield_BG"] resizableImageWithCapInsets:UIEdgeInsetsMake(13,13,13,13)]];
-    
+        [labelEditView setTextColor:[UIColor blackColor]];
     	[clearButton setImage:[UIImage classicFolderImageNamed:@"Mavericks/Mavericks_X"] forState:UIControlStateNormal];
     }
     [labelEditView setClearButtonMode:UITextFieldViewModeAlways];
