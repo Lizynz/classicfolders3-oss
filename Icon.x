@@ -133,7 +133,7 @@ static BOOL lockClassicIcon = NO;
 
 %hook SBHLibraryAdditionalItemsIndicatorIconImageView
 - (void)layoutSubviews {
-    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+    NSString *path1 = BOLDERS_PATH;
     if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
         %orig;
         return;
@@ -163,6 +163,6 @@ static BOOL lockClassicIcon = NO;
 
 %ctor {
     if ([[CSClassicFolderSettingsManager sharedInstance] enabled]){
-        %init(IconHook);
-    }
+		%init(IconHook);
+	}
 }

@@ -1,6 +1,10 @@
 #import <dlfcn.h>
 #import <UIKit/UIKit.h>
 
+#include <roothide.h>
+
+#define BOLDERS_PATH jbroot(@"/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib")
+
 #define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
 #define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
 
@@ -224,7 +228,7 @@
 @end
 
 @interface SBFolderIconImageView : UIImageView
--(UIView *)backgroundView;
+- (UIView *)backgroundView;
 @end
 
 @interface CSClassicFolderSettingsManager : NSObject {

@@ -58,7 +58,7 @@ static BOOL speed;
 
 %hook SBIconListFlowLayout // Icon Layout
 - (NSUInteger)numberOfRowsForOrientation:(NSInteger)arg1 {
-    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+    NSString *path1 = BOLDERS_PATH;
     if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
         return %orig(arg1);
     }
@@ -77,7 +77,7 @@ static BOOL speed;
 }
 
 - (NSUInteger)numberOfColumnsForOrientation:(NSInteger)arg1 {
-    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+    NSString *path1 = BOLDERS_PATH;
     if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
         return %orig(arg1);
     }
@@ -108,7 +108,7 @@ static BOOL speed;
 //≤ iOS 17
 %hook _SBIconGridWrapperView
 - (void)layoutSubviews {
-    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+    NSString *path1 = BOLDERS_PATH;
     if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
         %orig;
         return;
@@ -135,14 +135,14 @@ static BOOL speed;
 //iOS 18
 //%hook _SBIconGridImageWrapperView
 //- (void)layoutSubviews {
-//    NSString *path1 = @"/var/jb/Library/MobileSubstrate/DynamicLibraries/BoldersReborn.dylib";
+//    NSString *path1 = BOLDERS_PATH;
 //    if ([[NSFileManager defaultManager] fileExistsAtPath:path1]) {
 //        %orig;
 //        return;
 //    }
-//    
+//
 //    %orig;
-//    
+//
 //    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
 //        CGAffineTransform originalIconView = (self.transform);
 //        self.transform = CGAffineTransformMake(
@@ -161,7 +161,6 @@ static BOOL speed;
 
 //%hook SBFloatingDockViewController
 //- (void)_presentFolderForIcon:(SBFolderIcon *)folderIcon location:(NSString *)location animated:(BOOL)animated completion:(id)completion {
-//
 //    if (folderIcon && [self _shouldOpenFolderIcon:folderIcon]) {
 //        SBFolder *folder = [folderIcon folder];
 //       
@@ -217,13 +216,7 @@ static BOOL speed;
 //%end
 
 %hook SBFolderController
-- (BOOL)pushFolderIcon:(SBFolderIcon *)folderIcon location:(NSString *)location animated:(BOOL)animated completion:(id)completion {
-	
-//	if (![self isOpen]){
-//		NSLog(@"%@ Unable to open folder icon %@ because we aren't actually open!",self,folderIcon);
-//		return NO;
-//	}
-
+- (void)pushFolderIcon:(SBFolderIcon *)folderIcon location:(NSString *)location animated:(BOOL)animated completion:(id)completion {
     if ((folderIcon != nil) && ([self shouldOpenFolderIcon:folderIcon])){
         SBFolder *folder = [folderIcon folder];
         
@@ -312,8 +305,8 @@ static BOOL speed;
 }
 
 - (BOOL)popFolderAnimated:(BOOL)animated completion:(void(^)(BOOL finished))completion {
-	SBFolderController *innerController = [self innerFolderController];
-	if (innerController != nil){
+    SBFolderController *innerController = [self innerFolderController];
+    if (innerController != nil){
 		if ([innerController innerFolderController] != nil){
 			return [[innerController innerFolderController] popFolderAnimated:animated completion:completion];
 		} else {

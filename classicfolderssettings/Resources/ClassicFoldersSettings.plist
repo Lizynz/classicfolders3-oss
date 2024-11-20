@@ -222,7 +222,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>icon</key>
-			<string>/var/jb/Library/PreferenceBundles/ClassicFoldersSettings.bundle/Twitter.png</string>
+			<string>Twitter.png</string>
 			<key>label</key>
 			<string>CoolStar (@coolstarorg)</string>
 		</dict>
@@ -232,7 +232,7 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>icon</key>
-			<string>/var/jb/Library/PreferenceBundles/ClassicFoldersSettings.bundle/Twitter.png</string>
+			<string>Twitter.png</string>
 			<key>label</key>
 			<string>Jeremy Goulet (@JeremyGoulet)</string>
 		</dict>

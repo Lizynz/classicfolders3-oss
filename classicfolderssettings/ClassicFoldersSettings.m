@@ -1,5 +1,6 @@
 #import <Social/Social.h>
 #import <spawn.h>
+#include <roothide.h>
 
 extern char **environ;
 
@@ -23,39 +24,29 @@ extern char **environ;
 }
 
 - (void)viewDidLoad {
-	[super viewDidLoad];
+    [super viewDidLoad];
 
-	UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0,0,self.view.bounds.size.width, 121)];
-	headerView.tag = 23491234;
-	headerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-	[headerView setBackgroundColor:[UIColor colorWithRed:0 green:(122.f/255.f) blue:1.f alpha:1.0f]];
+    UIView *headerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 121)];
+    headerView.tag = 23491234;
+    headerView.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    [headerView setBackgroundColor:[UIColor colorWithRed:0 green:(122.f/255.f) blue:1.f alpha:1.0f]];
 
-	UIImageView *titleView = [[UIImageView alloc] initWithFrame:CGRectMake(0,0,320,121)];
-	titleView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
-	[titleView setImage:[UIImage imageWithContentsOfFile:@"/var/jb/Library/PreferenceBundles/ClassicFoldersSettings.bundle/banner.png"]];
-	[titleView setBackgroundColor:[UIColor colorWithRed:0 green:(122.f/255.f) blue:1.f alpha:1.0f]];
-	[headerView addSubview:titleView];
+    UIImageView *titleView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 320, 121)];
+    titleView.autoresizingMask = UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin;
+    [titleView setImage:[UIImage imageWithContentsOfFile:jbroot(@"/Library/PreferenceBundles/ClassicFoldersSettings.bundle/banner.png")]];
+    [titleView setBackgroundColor:[UIColor colorWithRed:0 green:(122.f/255.f) blue:1.f alpha:1.0f]];
+    
+    [headerView addSubview:titleView];
 
-	[[self table] addSubview:headerView];
-	[[self table] setContentOffset:CGPointMake(0,0)];
-
-	[[self navigationItem] setRightBarButtonItem:[[UIBarButtonItem alloc] initWithImage:[UIImage imageWithContentsOfFile:@"/var/jb/Library/PreferenceBundles/ClassicFoldersSettings.bundle/heart.png"] style:UIBarButtonItemStylePlain target:self action:@selector(tweet:)]];
-}
-
-- (void)tweet:(id)sender {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-	SLComposeViewController *tweetSheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-#pragma clang diagnostic pop
-	[tweetSheet setInitialText:@"I am loving #ClassicFolders3 by @CStar_OW and @JeremyGoulet!"];
-	[self presentViewController:tweetSheet animated:YES completion:nil];
+    [[self table] addSubview:headerView];
+    [[self table] setContentOffset:CGPointMake(0, 0)];
 }
 
 - (void)respring:(id)sender {
     pid_t pid;
     int status;
     const char* args[] = { "killall", "-9", "SpringBoard", NULL };
-    posix_spawn(&pid, "/var/jb/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
+    posix_spawn(&pid, jbroot("/usr/bin/killall"), NULL, NULL, (char* const*)args, NULL);
     waitpid(pid, &status, WEXITED);
 }
 
