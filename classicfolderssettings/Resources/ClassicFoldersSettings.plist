@@ -156,6 +156,18 @@
  			<key>label</key>
  			<string>Auto Close Folder</string>
  		</dict>
+ 		<dict>
+ 			<key>cell</key>
+ 			<string>PSSwitchCell</string>
+ 			<key>default</key>
+ 			<false/>
+ 			<key>defaults</key>
+ 			<string>org.coolstar.classicfolders</string>
+ 			<key>key</key>
+ 			<string>tapToCloseFolders</string>
+ 			<key>label</key>
+ 			<string>Tap To Close Folder</string>
+ 		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>

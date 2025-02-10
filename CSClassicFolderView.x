@@ -353,6 +353,23 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 	objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:NO], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 	[self setMagnificationFraction:0.0f];
+    
+    if ([[CSClassicFolderSettingsManager sharedInstance] tapToCloseFolders]){ //tap to close folder
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(clickClose)];
+        [scalingView addGestureRecognizer:tap];
+    }
+}
+
+%new
+- (void)clickClose {
+    SBFolderController *controller = [self folderController];
+    if ([self isEditing]) {
+        SBFolderController *parentController = [controller outerFolderController];
+        [parentController folderControllerShouldEndEditing:controller];
+    } else {
+        SBFolderController *parentController = [controller outerFolderController];
+        [parentController popFolderAnimated:YES completion:nil];
+    }
 }
 
 - (void)traitCollectionDidChange:(UITraitCollection *)previousTraitCollection {
@@ -441,6 +458,8 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
     
     CGFloat maxIconColumns = [[self currentIconListView] iconColumnsForCurrentOrientation];
     CGFloat maxIconRows = [[self currentIconListView] iconRowsForCurrentOrientation];
+    
+    iconRows = 0;
         
     NSArray *iconListViews = [self iconListViews];
     for (SBIconListView *iconListView in iconListViews) {
@@ -453,6 +472,26 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
             iconRows = rowsOfIcons;
     }
     return iconRows;
+}
+
+%new
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    [self getMaximumIconRowsForPages];
+    
+    [UIView animateWithDuration:0.3 animations:^{
+        [self layoutSubviews];
+    }];
+}
+
+%new
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if (!decelerate) {
+        [self getMaximumIconRowsForPages];
+        
+        [UIView animateWithDuration:0.3 animations:^{
+            [self layoutSubviews];
+        }];
+    }
 }
 
 %new;
@@ -901,17 +940,6 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 	}
 }
 
-/*- (void)_updateIconListFrames {
-	%orig;
-
-	UIScrollView *scrollView = [self scrollView];
-	if (@available(iOS 13, *)){
-		for (UIView *iconListView in [self iconListViews]){
-			iconListView.frame = scrollView.bounds;
-		}
-	}
-}*/
-
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated {
     %orig;
     [[self containerView] bringSubviewToFront:[self labelEditView]];
@@ -1088,7 +1116,7 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 %hook SBIconView
 - (long long)currentLabelAccessoryType {
     
-    if (@available(iOS 17, *)) { //Temporary solution
+    if (@available(iOS 17, *)) {
         return %orig;
     }
     

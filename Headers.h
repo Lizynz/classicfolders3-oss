@@ -208,6 +208,7 @@
 - (NSObject<SBFolderControllerDelegate> *)folderDelegate;
 - (void)setFolderDelegate:(NSObject<SBFolderControllerDelegate> *)delegate;
 - (void)setLegibilitySettings:(id)legibilitySettings;
+- (void)folderControllerShouldEndEditing:(id)arg1;
 @end
 
 @interface SBRootFolderView : SBFolderView
