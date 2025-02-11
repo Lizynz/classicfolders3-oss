@@ -476,20 +476,32 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 %new
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [self getMaximumIconRowsForPages];
     
-    [UIView animateWithDuration:0.3 animations:^{
+    float animTime = ((float)[self getMaximumIconRowsForPages] * 0.25);
+    if (animTime > 0.4)
+        animTime = 0.4;
+    animTime *= [[CSClassicFolderSettingsManager sharedInstance] speedMultiplier];
+    
+    [UIView animateWithDuration:animTime
+                     animations:^(void){
         [self layoutSubviews];
+        
     }];
 }
 
 %new
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
     if (!decelerate) {
-        [self getMaximumIconRowsForPages];
         
-        [UIView animateWithDuration:0.3 animations:^{
+        float animTime = ((float)[self getMaximumIconRowsForPages] * 0.25);
+        if (animTime > 0.4)
+            animTime = 0.4;
+        animTime *= [[CSClassicFolderSettingsManager sharedInstance] speedMultiplier];
+        
+        [UIView animateWithDuration:animTime
+                         animations:^(void){
             [self layoutSubviews];
+            
         }];
     }
 }
