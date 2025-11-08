@@ -524,49 +524,48 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 
 %new;
 - (void)openFolder:(BOOL)animated completion:(void (^)(BOOL completed))completion {
-	if ([objc_getAssociatedObject(self, &kCSFolderOpenIdentifier) boolValue])
-		return;
+    if ([objc_getAssociatedObject(self, &kCSFolderOpenIdentifier) boolValue])
+        return;
 
-	UIView *scalingView = [self valueForKey:@"_scalingView"];
+    UIView *scalingView = [self valueForKey:@"_scalingView"];
 
-	self.superview.clipsToBounds = NO;
-	UIView *containerView = [self containerView];
+    self.superview.clipsToBounds = NO;
+    UIView *containerView = [self containerView];
     
     BOOL isFlipped = [[[self folderIconView] location] containsString:@"Dock"];
-
-	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
-	SBRootFolderView *rootContentView = [rootFolderController contentView];
-	[rootContentView setClassicFolderInDock:isFlipped];
     
-	[self layoutSubviews];
-
-	objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:YES], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-
-	UIView *gestureView = [[UIView alloc] initWithFrame:self.frame];
-
-	UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismiss:)];
-	recognizer.numberOfTapsRequired = 1;
-	recognizer.numberOfTouchesRequired = 1;
-	[gestureView addGestureRecognizer:[recognizer autorelease]];
-
-	gestureView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
-	[self setGestureView:gestureView];
-	[scalingView insertSubview:[gestureView autorelease] belowSubview:containerView];
+    SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
+    SBRootFolderView *rootContentView = [rootFolderController contentView];
+    if ([rootContentView respondsToSelector:@selector(setClassicFolderInDock:)]) {
+        [rootContentView setClassicFolderInDock:isFlipped];
+    }
     
-    if ([self isEditing]) {
-        // nothing
-    } else {
+    if (![self isEditing]) {
         iconRows = 0;
     }
     
-	float animTime = ((float)[self getMaximumIconRowsForPages] * 0.25);
-	if (animTime > 0.4)
-		animTime = 0.4;
-	animTime *= [[CSClassicFolderSettingsManager sharedInstance] speedMultiplier];
-	[UIView animateWithDuration:animated? animTime : 0.0
-		animations:^(void){
-        
+    [self layoutSubviews];
+    
+    objc_setAssociatedObject(self, &kCSFolderOpenIdentifier, [NSNumber numberWithBool:YES], OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    
+    UIView *gestureView = [[UIView alloc] initWithFrame:self.frame];
+    
+    UITapGestureRecognizer *recognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismiss:)];
+    recognizer.numberOfTapsRequired = 1;
+    recognizer.numberOfTouchesRequired = 1;
+    [gestureView addGestureRecognizer:[recognizer autorelease]];
+    
+    gestureView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    
+    [self setGestureView:gestureView];
+    [scalingView insertSubview:[gestureView autorelease] belowSubview:containerView];
+    
+    float animTime = ((float)[self getMaximumIconRowsForPages] * 0.25);
+    if (animTime > 0.4)
+        animTime = 0.4;
+    animTime *= [[CSClassicFolderSettingsManager sharedInstance] speedMultiplier];
+    [UIView animateWithDuration:animated ? animTime : 0.0
+                     animations:^{
         //Because of this, code crashes on iOS 17. This code is responsible for checking the opening/closing ClassicFolders. Check is needed to add blur when opening folder, this function does not yet work on iOS 17.
         if (SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"14.0") && SYSTEM_VERSION_LESS_THAN(@"17.0")) {
             SBIconContentView *iconContentView = [(SBIconController *)[%c(SBIconController) sharedInstance] contentView];
@@ -582,7 +581,8 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
         }
         
         [self layoutSubviews];
-	} completion:completion];
+    }
+                     completion:completion];
 }
 
 %new;
@@ -595,9 +595,7 @@ static void hidePageControl16(SBRootFolderController *rootFolderController) {
 	SBRootFolderController *rootFolderController = [[%c(SBIconController) sharedInstance] _rootFolderController];
 	SBRootFolderView *rootContentView = [rootFolderController contentView];
     
-    if ([self isEditing]) {
-        // nothing
-    } else {
+    if (![self isEditing]) {
         iconRows = 0;
     }
 
