@@ -8,4 +8,5 @@ Folders in style iOS 6 on new devices.
 - [x] Support iOS 17 - 18 (tested on iOS Simulator).
 
 ## Doesn't work:
+- [ ]iOS 26+
 - [ ] On iPad.
